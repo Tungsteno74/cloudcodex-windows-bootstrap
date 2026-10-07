@@ -20,3 +20,6 @@ connector read or export connector tokens.
    do not request broader permissions merely to make a report look clean.
 8. GitHub/provider behavior may change; use observed responses and current official
    docs rather than broadening access or switching identities to bypass policy.
+9. Connector/control-plane completion may lag its first tool response. Reconcile exact
+   provider refs, marker commits and workflow runs before retrying or asserting that no
+   remote write occurred.

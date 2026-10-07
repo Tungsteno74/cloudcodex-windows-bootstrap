@@ -1,4 +1,4 @@
-# CloudCodeX Windows Bootstrap - 0.6.0
+# CloudCodeX Windows Bootstrap - 0.6.1
 
 Multi-skill Windows validation for Codex Cloud through GitHub Actions. The plugin
 requires the configured GitHub app and ships no credentials, MCP server, or Windows
@@ -51,7 +51,23 @@ resume the recorded validation after rechecking source revision, capabilities,
 authorization, and existing CI.
 
 The handoff carries pending work, not write permission, and is not a guaranteed
-platform hook.
+platform hook. Parent orchestrators should include the compact continuation in the
+first delegated turn instead of relying on `start_skill` as the only copy. If the
+child still lacks repository, full SHA, checks, authorization or interaction context,
+it returns those exact missing fields without remote writes.
+
+## Runtime resilience
+
+Connector/task state and approval outcomes may be delayed or stale. Before retrying
+or reporting `BLOCKED`/no remote writes after an ambiguous write-capable call, the
+plugin reconciles exact provider refs, marker commits and Actions runs while
+preserving the same `run_id`. Confirmed existing work is resumed; confirmed absence
+allows at most one authorized retry; inconclusive state stops without duplication.
+
+Generic setup-refresh warnings are diagnostic only: the agent verifies concrete
+skills/resources and continues when they are readable. The managed strategy uses
+provider refs plus marker commits and never depends on an invented
+`managed-state.md` file.
 
 ## Package resources
 

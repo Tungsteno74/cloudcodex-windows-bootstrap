@@ -1,7 +1,7 @@
 interface:
   display_name: GitHub Actions Windows Bootstrap
   short_description: Windows CI with per-run escalation
-  default_prompt: Use $github-actions-windows-bootstrap to validate or resume the Windows-only gap. Preserve explicit user mode; otherwise prefer AUTO only for positively identified delegated/unattended execution and CONFIRM for interactive or unknown context.
+  default_prompt: Use $github-actions-windows-bootstrap to validate or resume the Windows-only gap. Preserve explicit user mode; otherwise prefer AUTO only for positively identified delegated/unattended execution and CONFIRM for interactive or unknown context. If the delegated handoff is incomplete, return the exact missing context to the parent without writes. Reconcile ambiguous provider outcomes before retry or terminal reporting.
 policy:
   allow_implicit_invocation: true
   products:

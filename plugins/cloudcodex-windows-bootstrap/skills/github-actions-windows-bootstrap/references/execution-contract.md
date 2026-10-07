@@ -1,4 +1,4 @@
-# Shared execution contract — v0.6.0
+# Shared execution contract — v0.6.1
 
 This is an instruction contract, not an installed service, callback or permission
 grant. The current agent reads strategy instructions as needed.
@@ -33,7 +33,9 @@ Save a small run journal outside the source working tree before remote writes wh
 scratch/artifact storage exists. Record ref, workflow path, source/baseline/CI SHA,
 provider run id, fork ID and intended disposition. This is recovery evidence for
 this run, not a global setting. If storage is unavailable, keep exact identifiers
-in the result; never promise background cleanup.
+in the result; never promise background cleanup. Provider refs, commits, repository
+metadata and workflow runs are authoritative for remote effects; task/UI/connector
+status is advisory and may lag.
 
 Before external resources, disclose plugin/skill, repository/revision, Actions
 usage, strategy, whether a branch/fork may intentionally remain and the cleanup or
@@ -94,6 +96,33 @@ start a duplicate run or move/delete a ref while required jobs are active.
 A pass requires intended Windows jobs/checks to finish successfully on exact source
 SHA. Application/test failure is FAILED_CHECKS, not an escalation trigger.
 
+## Ambiguous control-plane outcomes and reconciliation
+
+A write-capable tool timeout, cancellation, approval transition, stale connector
+state, or generic failure is not proof that no provider side effect occurred. Treat
+the outcome as unknown unless the provider guarantees an atomic no-op. Before retry,
+fallback, cleanup claims, or a terminal `BLOCKED`/`AUTHORIZATION_REQUIRED` result:
+
+1. Preserve the same `run_id`, source SHA, account/channel and expected identifiers.
+2. Perform bounded read-only reconciliation against the provider: exact refs/tips,
+   marker commits and parents/trees, workflow path, branch + CI SHA runs/jobs, and
+   known run-owned forks. Prefer completion events; otherwise use progressive limited
+   checks and stop as soon as the state is conclusive.
+3. Classify `reconciliation_status` as `confirmed_absent`, `confirmed_present`,
+   `in_progress`, `terminal`, or `inconclusive`. Absence is confirmable only when all
+   possible effects of that operation are observable or the provider guarantees an
+   atomic no-op. If a create-object call could leave an unreferenced object and no
+   object ID/SHA was returned, classify it as `inconclusive`, not `confirmed_absent`.
+4. `confirmed_absent` permits at most one idempotent retry of the same operation when
+   it remains authorized. `confirmed_present`/`in_progress` resumes observation or
+   cleanup without duplicate writes. `terminal` reports the actual provider result.
+   `inconclusive` stops without retry and reports exact uncertainty plus any cleanup
+   risk.
+
+Never claim no remote writes or `cleanup: complete` after an ambiguous outcome unless
+provider read-back supports it. Never start a second strategy or run solely because
+the control plane or task connector is stale.
+
 ## Cleanup, retention and idempotence
 
 Only mutate/remove resources with recorded strategy ownership and unchanged expected
@@ -116,7 +145,10 @@ report `cleanup: required`. Cleanup cannot be guaranteed after abrupt terminatio
 `DEFERRED_TO_TASK` carries pending work, not write authorization. It also is **not a
 prohibition on later writes**. A no-write statement from onboarding describes that
 onboarding attempt unless an explicit user/host/repository policy prohibition was
-recorded separately.
+recorded separately. Because `start_skill` or task metadata can be missing/stale, a
+parent delegation should include the compact continuation in its first turn. If
+security-relevant context is still missing, return the exact missing fields to the
+parent without writes rather than guessing.
 
 On resume, recheck source SHA, capabilities and scope. Preserve a mode only when the
 record proves an explicit user choice for the verified same run. An onboarding
@@ -137,7 +169,7 @@ authorization; if authorization is missing or ambiguous return
 WINDOWS_CI_BOOTSTRAP: <REUSED|COMPLETED|FAILED_CHECKS|PENDING|AWAITING_CONFIRMATION|AUTHORIZATION_REQUIRED|DEFERRED_TO_TASK|BLOCKED|DECLINED|NOT_APPLICABLE>
 run_id: <id>
 plugin: cloudcodex-windows-bootstrap
-plugin_version: 0.6.0
+plugin_version: 0.6.1
 phase: <onboarding|task|unknown>
 INTERACTION_CONTEXT: <delegated|interactive|unknown>
 ESCALATION_MODE: <CONFIRM|AUTO>
@@ -164,6 +196,8 @@ actions_run: <run id/URL or none>
 windows_ci_validation: <passed|failed|pending|not_run>
 covered_checks: <checks actually run>
 residual_windows_checks: <unverified checks>
+reconciliation_status: <not_needed|confirmed_absent|confirmed_present|in_progress|terminal|inconclusive>
+reconciliation_evidence: <exact refs/run IDs/commit SHAs or none>
 temporary_resources: <run-owned refs/fork IDs actually created>
 persistent_resources: <managed/retained refs intentionally remaining, or none>
 cleanup: <complete|required|pending|not_needed>

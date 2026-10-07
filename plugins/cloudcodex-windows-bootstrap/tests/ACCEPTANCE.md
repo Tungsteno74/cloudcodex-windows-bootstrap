@@ -11,6 +11,10 @@ End-to-end Cloud cases; package unit tests do not prove model dispatch or caller
 | Interaction context unavailable | CONFIRM + `unknown_default`. |
 | Merely being a Codex Cloud task | Does not by itself imply delegated AUTO. |
 | DEFERRED_TO_TASK inherited | Resume Windows validation; recompute default mode from actual task context unless same-run explicit user choice is verified. |
+| Parent delegation is positive but handoff fields are missing | BLOCKED/returned_to_caller with exact missing repository/SHA/checks/authorization/context; no vague prompt and no writes. |
+| Generic `setup refresh had errors` warning but concrete skill/resources are readable | Continue; do not recreate/republish the environment solely for the warning. |
+| Write/approval result is ambiguous or task state is stale | Reconcile exact provider refs/commits/runs before retry or terminal no-write reporting; preserve the same run_id. |
+| Managed strategy state lookup | Use provider ref/marker + run journal; never require `managed-state.md`. |
 | Delegated AUTO reaches action outside current authorization | AUTHORIZATION_REQUIRED/provider approval; no invented consent. |
 | Onboarding lacks GitHub tools | DEFERRED_TO_TASK; plan persisted by caller; no remote write. |
 | Bootstrap needs strict strategy | `$windows-ci-ephemeral-branch` selected without manual user skill prompt. |

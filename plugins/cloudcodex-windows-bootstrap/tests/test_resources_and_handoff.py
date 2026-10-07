@@ -66,13 +66,28 @@ class DispatchAndHandoffTests(unittest.TestCase):
         self.assertIn('DEFERRED_TO_TASK by itself does not prove', ' '.join(self.entry.replace('`', '').split()))
         self.assertIn('must not freeze a later delegated task into CONFIRM', self.contract)
 
+    def test_setup_refresh_warning_is_not_global_failure(self) -> None:
+        self.assertIn('setup refresh had errors', self.entry)
+        self.assertIn('Do not recreate or republish an environment', self.entry)
+
+    def test_missing_handoff_returns_structured_context(self) -> None:
+        for phrase in ('Missing or stale handoff context', 'handoff_status: returned_to_caller',
+                       'repository, full source SHA, checks, authorization scope'):
+            self.assertIn(phrase, self.entry)
+        self.assertIn('start_skill` is an optimization', self.entry)
+
+    def test_ambiguous_write_requires_provider_reconciliation(self) -> None:
+        for phrase in ('provider-state reconciliation', 'Never claim no remote writes',
+                       'reconciliation_status:', 'never duplicate', 'unreferenced object'):
+            self.assertIn(phrase.lower(), (self.entry + self.contract).lower())
+
     def test_strategy_order_preserved(self) -> None:
         auto = self.entry.split('### AUTO',1)[1].split('## 5.',1)[0]
         self.assertLess(auto.index('$windows-ci-managed-branch'), auto.index('$windows-ci-fork-fallback'))
         self.assertLess(auto.index('$windows-ci-fork-fallback'), auto.index('ephemeral_retained'))
 
     def test_contract_version_and_fields(self) -> None:
-        self.assertIn('plugin_version: 0.6.0', self.contract)
+        self.assertIn('plugin_version: 0.6.1', self.contract)
         self.assertIn('INTERACTION_CONTEXT:', self.contract)
         self.assertIn('ESCALATION_MODE_SOURCE:', self.contract)
 

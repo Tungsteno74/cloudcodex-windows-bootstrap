@@ -48,8 +48,8 @@ class PackageTests(unittest.TestCase):
 
     def test_version_and_identity(self) -> None:
         self.assertEqual(self.manifest['name'], 'cloudcodex-windows-bootstrap')
-        self.assertEqual(self.manifest['version'], '0.6.0')
-        self.assertEqual(self.overlay['version'], '0.6.0')
+        self.assertEqual(self.manifest['version'], '0.6.1')
+        self.assertEqual(self.overlay['version'], '0.6.1')
         self.assertEqual(self.overlay['name'], self.manifest['name'])
         self.assertEqual(self.overlay['interface'], self.manifest['extensions']['com.openai']['interface'])
 
@@ -80,7 +80,10 @@ class PackageTests(unittest.TestCase):
         self.assertIn(interlace, (0, 1))
 
     def test_default_prompt_preserved(self) -> None:
-        expected = 'Bootstrap or reuse GitHub Actions Windows validation for the Windows-only gap already identified by Codex Cloud onboarding.'
+        expected = ('Use $github-actions-windows-bootstrap to validate or resume the recorded Windows-only gap. '
+            'If delegated context or start_skill data is missing, return the exact repository, revision, '
+            'checks, authorization, and interaction context needed by the parent without remote writes. '
+            'Reconcile ambiguous provider outcomes before retrying or reporting no changes.')
         self.assertEqual(self.overlay['interface']['defaultPrompt'], expected)
 
     def test_operational_skills_implicit_probe_explicit(self) -> None:
@@ -105,6 +108,20 @@ class PackageTests(unittest.TestCase):
                 self.assertIn('ROUTER_CONTEXT_REQUIRED', text)
                 self.assertIn('$github-actions-windows-bootstrap', text)
                 self.assertRegex(text, r'no remote\s+write|make no remote write')
+
+    def test_reconciliation_contract_is_distributed(self) -> None:
+        for phrase in ('Ambiguous control-plane outcomes and reconciliation',
+                       'reconciliation_status:', 'Never claim no remote writes'):
+            self.assertIn(phrase, self.contract)
+        for name in STRATEGIES:
+            local = ROOT / 'skills' / name / 'references/execution-contract.md'
+            self.assertEqual(local.read_bytes(), (ENTRY / 'references/execution-contract.md').read_bytes())
+
+    def test_no_invented_managed_state_dependency(self) -> None:
+        managed = self.strategies['windows-ci-managed-branch']
+        self.assertIn('No `managed-state.md` file is part of this', managed)
+        for path in ROOT.rglob('*'):
+            self.assertNotEqual(path.name, 'managed-state.md')
 
     def test_no_cross_skill_runtime_paths(self) -> None:
         for name, text in self.strategies.items():

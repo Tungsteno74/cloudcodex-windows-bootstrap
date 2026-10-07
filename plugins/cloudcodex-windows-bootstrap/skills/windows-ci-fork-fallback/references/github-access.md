@@ -59,7 +59,20 @@ ask for retained/managed/stop; AUTO may try managed, eligible fork, then retaine
 Use an ALREADY configured and authorized terminal/Git transport only when identity
 and scope are established and it does not bypass a denial. Do not copy connector credentials, start new login flows, enlarge scopes or change app permissions.
 
-## 6. Diagnose the failing layer
+## 6. Reconcile ambiguous write outcomes
+
+A host/tool response such as timeout, cancellation, `approval required`, stale task
+state, or generic failure can be provisional. It does not prove the provider rejected
+the mutation. Preserve the same run identifiers and perform bounded GET-only read-back
+for the exact ref/tip, marker commit, workflow path and branch+CI-SHA run before any
+retry or terminal no-write report. If provider state confirms the operation, continue
+from that state. Treat absence as confirmed only when every possible effect is
+observable or the provider guarantees an atomic no-op; an unreferenced object with no
+returned ID/SHA remains inconclusive. Retry at most once when absence is confirmed and
+the operation remains authorized. Otherwise stop without duplicate writes and report
+reconciliation risk.
+
+## 7. Diagnose the failing layer
 
 Keep operation/channel/status/evidence. Use these classifications where supported:
 `GITHUB_TOOLS_UNAVAILABLE`, `RATE_LIMITED`, `OPERATION_PERMISSION_DENIED`,

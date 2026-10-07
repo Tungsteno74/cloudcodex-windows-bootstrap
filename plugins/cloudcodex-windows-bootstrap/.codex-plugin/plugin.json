@@ -2,21 +2,22 @@
   "interface": {
     "displayName": "CloudCodeX Windows Bootstrap",
     "shortDescription": "Bootstrap Windows CI",
-    "longDescription": "Skill-based Windows validation through the existing GitHub app. The bootstrap skill can hand off from onboarding to a normal Cloud task; strategy skills are independently discoverable but hard-gated by a valid bootstrap run context. Explicit user mode always wins; positively identified delegated or unattended runs prefer AUTO, while interactive or unknown contexts default to CONFIRM. AUTO only routes among already eligible strategies and never expands credentials, approvals, policy or task scope. Each execution strategy carries local contracts and workflow resources. No automatic PR, merge or default-branch writes.",
+    "longDescription": "Skill-based Windows validation through the existing GitHub app. The bootstrap skill can hand off from onboarding to a normal Cloud task; strategy skills are independently discoverable but hard-gated by a valid bootstrap run context. Explicit user mode always wins; positively identified delegated or unattended runs prefer AUTO, while interactive or unknown contexts default to CONFIRM. AUTO only routes among already eligible strategies and never expands credentials, approvals, policy or task scope. Ambiguous approval or write outcomes are reconciled against provider state before retry or terminal reporting, and missing delegated context is returned to the parent without remote writes. Each execution strategy carries local contracts and workflow resources. No automatic PR, merge or default-branch writes.",
     "developerName": "Tungsteno74",
     "category": "Developer Tools",
     "capabilities": [
       "Windows CI validation",
       "Context-aware per-run escalation",
+      "Provider-state reconciliation",
       "Self-contained strategy skills"
     ],
-    "defaultPrompt": "Bootstrap or reuse GitHub Actions Windows validation for the Windows-only gap already identified by Codex Cloud onboarding.",
+    "defaultPrompt": "Use $github-actions-windows-bootstrap to validate or resume the recorded Windows-only gap. If delegated context or start_skill data is missing, return the exact repository, revision, checks, authorization, and interaction context needed by the parent without remote writes. Reconcile ambiguous provider outcomes before retrying or reporting no changes.",
     "logo": "./assets/icon.png",
     "composerIcon": "./assets/icon.png"
   },
   "apps": "./.app.json",
   "name": "cloudcodex-windows-bootstrap",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Windows validation for Codex Cloud using strict ephemeral CI first, managed/fork escalation, and an explicit retained-branch fallback with context-aware CONFIRM/AUTO routing.",
   "author": {
     "name": "Tungsteno74"

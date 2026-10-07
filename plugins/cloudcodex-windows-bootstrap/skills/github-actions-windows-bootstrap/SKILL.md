@@ -6,7 +6,9 @@ description: >-
   that inherits DEFERRED_TO_TASK. Reuse exact-revision CI first; otherwise route
   strict ephemeral, managed, fork or retained strategies. Explicit user mode wins;
   delegated/unattended execution prefers AUTO, interactive or unknown execution
-  defaults to CONFIRM. Strategy skills require this bootstrap run context.
+  defaults to CONFIRM. Ambiguous write outcomes are reconciled against provider
+  state before retry or terminal reporting. Strategy skills require this bootstrap
+  run context.
 ---
 
 # Windows CI bootstrap — entry skill
@@ -64,6 +66,12 @@ Read the [execution contract](references/execution-contract.md) and
 [GitHub access contract](references/github-access.md) once per run. Reuse the
 onboarding/task evidence for host OS, inspected files and Windows-only gaps; do not
 repeat a full scan or deliberately run an incompatible test.
+
+A generic host warning such as `setup refresh had errors` is not by itself a
+plugin failure. Verify the exact installed skill/resource and required tool
+capability once. If they are readable/available, continue; otherwise report the
+specific missing dependency. Do not recreate or republish an environment merely
+to clear a generic refresh warning.
 
 Establish a strategy run context containing at least:
 
@@ -165,6 +173,14 @@ interactive approval that the host/provider requires. A delegated-default AUTO r
 must not emit AWAITING_CONFIRMATION merely because multiple eligible plugin
 strategies exist.
 
+Before retrying or returning terminal `BLOCKED`, `AUTHORIZATION_REQUIRED`, or a
+no-write result after any write-capable call with a timeout, cancellation, approval
+transition, stale task state, or otherwise ambiguous outcome, apply the shared
+provider-state reconciliation contract. Preserve the same `run_id`; never duplicate
+a branch, workflow run, fork, or write merely because the caller/control-plane view
+lags. Provider refs, marker commits and Actions runs are authoritative for remote
+side effects.
+
 **Missing skill/tool:** name it exactly. Never silently install another plugin,
 invent a provider operation, or treat a missing sibling file as permission to
 reimplement a different strategy.
@@ -174,7 +190,10 @@ reimplement a different strategy.
 Always emit the shared result contract, including early BLOCKED,
 AWAITING_CONFIRMATION, AUTHORIZATION_REQUIRED and DEFERRED_TO_TASK exits. A
 successful ref write or scheduled run is not a Windows test pass. Continue permitted
-Linux work while Windows is pending/blocked.
+Linux work while Windows is pending/blocked. Never claim `repository_changes: none`,
+`temporary_resources: none`, or equivalent no-write language after an ambiguous
+write outcome unless bounded provider read-back confirms the relevant resources are
+absent.
 
 Do not edit environment install instructions, force Publish/Republish, recreate an
 environment or modify AGENTS on this skill's behalf.
@@ -212,7 +231,18 @@ configuration authority, to preserve this continuation in `start_skill`:
 > is not a prohibition on later writes; normal authorization rules apply.
 
 Do not create the task or promise an automatic hook. Report whether persistence was
-actually confirmed by the caller.
+actually confirmed by the caller. The parent should also include the compact
+continuation in the first delegated task turn; `start_skill` is an optimization,
+not the only authoritative copy of the handoff.
+
+### Missing or stale handoff context
+
+If a caller positively identifies parent delegation but the task cannot see enough
+context to establish repository, full source SHA, checks, authorization scope and
+interaction mode, make no remote write. Return `BLOCKED` to the caller with
+`handoff_status: returned_to_caller` and list those exact missing fields in
+`missing_capability`; do not ask only a vague question such as "what task?" and do
+not infer the missing values from repository ownership or prior defaults.
 
 ### Resume in a normal Cloud task
 

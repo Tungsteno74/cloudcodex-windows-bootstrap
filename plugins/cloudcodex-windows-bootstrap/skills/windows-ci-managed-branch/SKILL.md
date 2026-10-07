@@ -33,7 +33,9 @@ Markers:
 - `cloudcodex-windows-bootstrap managed baseline v1`
 - `cloudcodex-windows-bootstrap managed ci v1`
 
-Do not treat branch name alone as ownership proof.
+Do not treat branch name alone as ownership proof. Provider refs/marker commits and
+the run journal are the managed state. No `managed-state.md` file is part of this
+contract; do not probe, invent, or create that path.
 
 ## Eligibility and ownership
 
@@ -79,6 +81,10 @@ before remote object/ref writes. Otherwise `WORKFLOW_MATERIALIZATION_UNVERIFIED`
 7. After terminal run, restore CI SHA -> new baseline using
    `expected_sha=<ci_sha>`, `force=true`; verify final tip/tree and report
    `retention: managed_baseline`.
+8. If any write-capable call has an ambiguous/approval/timeout outcome, apply the
+   shared provider-state reconciliation contract before retry, next step or terminal
+   reporting. Never duplicate baseline/CI commits or claim no remote writes from tool
+   status alone.
 
 If reset fails or tip changed, `cleanup: required`; do not start another execution
 strategy after managed published or started a run. FAILED_CHECKS is final evidence,

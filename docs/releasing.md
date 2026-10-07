@@ -8,8 +8,8 @@
 Example:
 
 ```sh
-git tag -a v0.6.0 -m "Release 0.6.0"
-git push origin v0.6.0
+git tag -a v0.6.1 -m "Release 0.6.1"
+git push origin v0.6.1
 ```
 
 The release workflow validates the tagged revision, downloads the already verified

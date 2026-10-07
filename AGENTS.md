@@ -11,6 +11,10 @@ The bootstrap's reference directory is the canonical source of shared contracts/
 use its existing sync tool to update strategy-local copies, then verify their equality.
 Do not change runtime policy just to make a packaging test pass. Distinguish source revision,
 synthetic CI revision and managed baseline; never weaken authorization or cleanup guards.
+Treat remote write/approval outcomes as potentially asynchronous: before retrying or claiming
+no side effects, reconcile exact provider refs, marker commits and workflow runs while preserving
+the same run ID. Never duplicate CI resources from stale connector/task state. If delegated
+context is incomplete, return the exact missing fields to the parent without writes.
 
 Run `python -X utf8 tools/validate.py` before committing. It runs package regressions,
 repository/distribution checks, resource synchronization and deterministic archive builds.

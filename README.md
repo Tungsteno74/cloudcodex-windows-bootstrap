@@ -75,9 +75,10 @@ and verifies reproducible ZIP output on Linux and Windows CI.
 
 ## Status
 
-**0.6.0 is pre-1.0.** Core managed and retained branch flows are tested; broader
-end-to-end coverage is still planned for delegated AUTO, fork, concurrency, and
-cleanup paths.
+**0.6.1 is pre-1.0.** Delegated AUTO, authorization escalation, managed cleanup,
+and Local/Cloud Windows execution are validated. Remaining coverage focuses on
+strict deletion, fork, concurrency, interrupted execution, and lease conflicts.
 
 See [project status](docs/PROJECT_STATUS.md), [validation status](docs/test-status.md),
-and [release process](docs/releasing.md). Licensed under [MIT](LICENSE).
+[runtime resilience guidance](docs/runtime-resilience.md), and
+[release process](docs/releasing.md). Licensed under [MIT](LICENSE).

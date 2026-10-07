@@ -52,7 +52,8 @@ propagation; YAML/pin/diff validation before remote writes. Otherwise return
 1. Resolve/announce exact fork owner/repository/source SHA. Materialize and validate
    the workflow before fork resources. Ambiguous destination => stop.
 2. If creating a fork, use unique run-owned destination and record repository ID;
-   reconcile uncertain responses before retrying.
+   reconcile uncertain responses against exact provider repository/ref/run state
+   before retrying. Never create a second fork or CI run from stale tool status.
 3. Inspect fork Actions/inherited automation before enabling or writing. Do not
    weaken policy or enable privileged/scheduled behavior unexpectedly.
 4. Execute CI **inside the fork only** using the predeclared strict or managed

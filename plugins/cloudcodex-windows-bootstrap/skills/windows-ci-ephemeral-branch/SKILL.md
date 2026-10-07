@@ -92,6 +92,9 @@ Materialization is not a new strategy/escalation and does not alter permissions.
    - retained: never claim deletion. If safe `update_ref` exists and tip == CI SHA,
      move to exact source SHA with `expected_sha=<ci_sha>`, `force=true` and report
      `retention: retained_source`; otherwise report `retention: retained_ci`.
+6. If a write/delete call has an ambiguous/approval/timeout outcome, reconcile the
+   exact run-owned branch, CI SHA, workflow run and expected disposition before any
+   retry or no-write/cleanup claim. Never start a duplicate CI run.
 
 FAILED_CHECKS, PENDING and auth/network/global failures do not escalate. Never move
 or repair the default branch.

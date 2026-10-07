@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.1 — 2026-10-07
+
+- Reconcile ambiguous approval/tool outcomes against provider refs, marker commits, and Actions runs before retry or terminal reporting.
+- Return structured missing handoff context to the parent and treat `start_skill` as an optimization rather than the sole continuation copy.
+- Treat generic setup-refresh warnings as diagnostic, not global failure, when concrete plugin resources remain available.
+- Make managed state explicitly provider-backed and forbid invented `managed-state.md` dependencies.
+- Add regression coverage and document live Cloud/Local gate results and control-plane caveats.
+
 ## 0.6.0 — 2026-10-07
 
 - Establish CloudCodeX Windows Bootstrap as the baseline public GitHub distribution.
