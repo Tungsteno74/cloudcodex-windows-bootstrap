@@ -1,0 +1,8 @@
+interface:
+  display_name: Windows CI Managed Branch
+  short_description: Windows CI on a reusable managed branch
+  default_prompt: Use $windows-ci-managed-branch only inside an established $github-actions-windows-bootstrap run context and after the required CONFIRM/AUTO routing; otherwise route through the bootstrap without writes.
+policy:
+  allow_implicit_invocation: true
+  products:
+  - CODEX

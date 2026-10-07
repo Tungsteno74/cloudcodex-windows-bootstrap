@@ -1,0 +1,8 @@
+interface:
+  display_name: Cloud Windows Check Probe
+  short_description: Explicit read-only Windows gap probe
+  default_prompt: Use $codex-cloud-windows-check-probe to report the already observed Windows gap without changing anything.
+policy:
+  allow_implicit_invocation: false
+  products:
+  - CODEX

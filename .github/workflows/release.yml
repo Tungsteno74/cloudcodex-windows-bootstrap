@@ -1,0 +1,65 @@
+name: Release
+
+"on":
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+    permissions:
+      contents: read
+
+  # This is the only write-enabled job; it publishes the artifact produced by validation.
+  publish:
+    name: Publish verified artifact
+    needs: [validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact from this validated run
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: plugin-package
+          path: dist
+      - name: Check checksum, version and exact source revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd dist && sha256sum --check SHA256SUMS)
+          python3 - <<'PY'
+          import json, os, pathlib, re
+          manifest = json.loads(pathlib.Path('dist/release-manifest.json').read_text())
+          tag = os.environ['GITHUB_REF_NAME']
+          if not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag):
+              raise SystemExit('Expected a semantic release tag.')
+          if tag != 'v' + manifest['version']:
+              raise SystemExit('Tag and plugin version disagree.')
+          if manifest['source_revision'] != os.environ['GITHUB_SHA']:
+              raise SystemExit('Artifact was built from a different revision.')
+          if manifest['plugin'] != 'cloudcodex-windows-bootstrap':
+              raise SystemExit('Unexpected plugin identity.')
+          expected = 'cloudcodex-windows-bootstrap-' + manifest['version'] + '.zip'
+          if manifest['archive'] != expected or not pathlib.Path('dist', expected).is_file():
+              raise SystemExit('Unexpected or missing release archive.')
+          PY
+      - name: Create GitHub prerelease without rebuilding or overwriting
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "$GITHUB_REF_NAME" dist/*.zip dist/SHA256SUMS dist/release-manifest.json \
+            --verify-tag --prerelease \
+            --title "CloudCodeX Windows Bootstrap $GITHUB_REF_NAME" \
+            --notes "Community GitHub distribution. Includes the verified standalone plugin ZIP, SHA-256 checksums and source revision manifest. Pre-1.0: review the repository test-status document for outstanding end-to-end cases. This release is not an official OpenAI directory submission."

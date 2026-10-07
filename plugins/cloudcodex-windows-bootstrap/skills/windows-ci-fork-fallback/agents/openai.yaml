@@ -1,0 +1,8 @@
+interface:
+  display_name: Windows CI Fork Fallback
+  short_description: Windows CI on an authorized fork
+  default_prompt: Use $windows-ci-fork-fallback only inside an established $github-actions-windows-bootstrap run context after an eligible blocker and CONFIRM/AUTO routing; otherwise route through the bootstrap without writes.
+policy:
+  allow_implicit_invocation: true
+  products:
+  - CODEX

@@ -1,0 +1,8 @@
+interface:
+  display_name: Windows CI Ephemeral Branch
+  short_description: Windows CI using a temporary branch
+  default_prompt: Use $windows-ci-ephemeral-branch only inside an established $github-actions-windows-bootstrap run context; otherwise route through the bootstrap without writes.
+policy:
+  allow_implicit_invocation: true
+  products:
+  - CODEX

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cloudcodex-windows-bootstrap",
+  "version": "0.6.0",
+  "description": "Windows validation for Codex Cloud using strict ephemeral CI first, managed/fork escalation, and an explicit retained-branch fallback with context-aware CONFIRM/AUTO routing.",
+  "author": {
+    "name": "Tungsteno74"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "CloudCodeX Windows Bootstrap",
+        "shortDescription": "Bootstrap Windows CI",
+        "longDescription": "Skill-based Windows validation through the existing GitHub app. The bootstrap skill can hand off from onboarding to a normal Cloud task; strategy skills are independently discoverable but hard-gated by a valid bootstrap run context. Explicit user mode always wins; positively identified delegated or unattended runs prefer AUTO, while interactive or unknown contexts default to CONFIRM. AUTO only routes among already eligible strategies and never expands credentials, approvals, policy or task scope. Each execution strategy carries local contracts and workflow resources. No automatic PR, merge or default-branch writes.",
+        "developerName": "Tungsteno74",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Windows CI validation",
+          "Context-aware per-run escalation",
+          "Self-contained strategy skills"
+        ],
+        "defaultPrompt": "Bootstrap or reuse GitHub Actions Windows validation for the Windows-only gap already identified by Codex Cloud onboarding.",
+        "logo": "./assets/icon.png",
+        "composerIcon": "./assets/icon.png"
+      },
+      "apps": "./.app.json"
+    }
+  }
+}

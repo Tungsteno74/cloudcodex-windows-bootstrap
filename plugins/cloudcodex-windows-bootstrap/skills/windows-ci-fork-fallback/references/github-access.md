@@ -1,0 +1,69 @@
+# GitHub access - connector-first contract
+
+Prefer native GitHub connector operations. This contract is copied into each
+execution strategy so a strategy never needs a sibling-skill file at runtime.
+
+## 1. Discover the declared app and select the account
+
+The package requires the existing GitHub app. Discover tools in the CURRENT host.
+An installed plugin or loaded skill is not evidence of API access. If initial
+repository/Actions tools are unavailable, report `GITHUB_TOOLS_UNAVAILABLE`.
+During confirmed onboarding with inspected source and no remote writes, the entry
+skill may return DEFERRED_TO_TASK; in a normal task or unknown phase return BLOCKED.
+
+Use account metadata actually exposed by the tools. Do not hardcode selectors,
+select by nickname/list order or infer repository owner equals acting account.
+Ask if multiple identities could perform a write and intent is ambiguous. Never
+print selectors, tokens, credential files or auth headers.
+
+## 2. Two narrow read checks, no permission-test writes
+
+Prefer native GitHub connector operations to terminal HTTP or `gh api`.
+Read exact repository metadata and relevant Actions runs with bounded GET-only
+operations. Metadata `push: true` is not proof of Workflows write scope. Zero runs
+is a successful empty result, not Forbidden.
+
+If terminal HTTP failed but connector reads succeed, record
+`github_access_status: read_verified`; do not request tokens merely to repeat a
+supported request.
+
+## 3. Plan callable routes before mutation
+
+Discover only capabilities needed by the selected strategy. Tool existence and
+provider permission are separate.
+
+- Source/ref/tree read: get_repo/file/commit/tree reads or approved **GET-only** fetch.
+- CI objects: `create_tree` + `create_commit` from pinned source tree/parent.
+- Branch publication: `create_branch` only after the complete CI SHA exists.
+- Actions observation: run collection filtered by branch/SHA, then jobs/logs.
+- Strict cleanup: actual ref deletion or independently authorized existing Git transport;
+  `delete_file` is not branch deletion.
+- Managed movement: `update_ref` with exact `expected_sha` and forced lease semantics;
+  never represent `update_ref` as deletion.
+- Fork: Discover actual fork creation/settings/cleanup capabilities first.
+
+For Git-data creation, use `base_tree_sha` from the pinned source tree and explicit
+`parent_sha`. Keep source SHA, tree SHA, baseline SHA and CI SHA distinct. A
+successful write does NOT prove a Windows run occurred; observe the actual run.
+No wildcard/mirror/default-branch push.
+
+## 4. Ref deletion is a strategy constraint, not a global failure
+
+If delete_ref is absent, `ephemeral_strict` returns `REF_DELETE_UNAVAILABLE` before
+remote writes. That is a strategy constraint, not a global failure. The router may
+ask for retained/managed/stop; AUTO may try managed, eligible fork, then retained.
+`update_ref` may neutralize or manage a retained branch but does not delete it.
+
+## 5. Existing terminal/Git transport
+
+Use an ALREADY configured and authorized terminal/Git transport only when identity
+and scope are established and it does not bypass a denial. Do not copy connector credentials, start new login flows, enlarge scopes or change app permissions.
+
+## 6. Diagnose the failing layer
+
+Keep operation/channel/status/evidence. Use these classifications where supported:
+`GITHUB_TOOLS_UNAVAILABLE`, `RATE_LIMITED`, `OPERATION_PERMISSION_DENIED`,
+`FORBIDDEN_UNCLASSIFIED`, `REF_DELETE_UNAVAILABLE`, `MANAGED_UPDATE_UNAVAILABLE`.
+A bare 403 has no inferred cause or fallback. Zero runs is a successful empty result.
+Stop strategy hopping on unclassified errors, account failures, rate limits,
+global outages, test failures and active/PENDING runs.
