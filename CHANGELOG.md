@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.4 ? 2026-10-08
+
+- Move the canonical workflow template to `assets/windows-workflow.yml`
+  and distribute synchronized copies inside each strategy.
+- Fix Cloud resource-loading compatibility: `.yaml` and `.yml`
+  are readable, while the former `.yml.template` suffix is not registered.
+  Confirmed with identical-byte probes in both skill directories.
+- Remove duplicated embedded YAML from SKILL.md; preserve verified synthesis
+  as an exceptional fallback with existing security/authorization guards.
+
 ## 0.6.2 — 2026-10-08
 
 - Embed a verified copy of the Windows workflow template in each strategy SKILL.md so Cloud agents can materialize it without auxiliary resource mounts. Synchronize and test the inline/sidecar copies at build time.

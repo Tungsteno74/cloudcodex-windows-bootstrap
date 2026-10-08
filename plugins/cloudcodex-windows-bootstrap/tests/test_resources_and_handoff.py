@@ -87,10 +87,12 @@ class DispatchAndHandoffTests(unittest.TestCase):
         self.assertLess(auto.index('$windows-ci-fork-fallback'), auto.index('ephemeral_retained'))
 
     def test_contract_version_and_fields(self) -> None:
-        self.assertIn('plugin_version: 0.6.2', self.contract)
+        self.assertIn('plugin_version: 0.6.4', self.contract)
         self.assertIn('INTERACTION_CONTEXT:', self.contract)
         self.assertIn('ESCALATION_MODE_SOURCE:', self.contract)
-        self.assertIn('embedded_template', self.contract)
+        self.assertIn('assets/windows-workflow.yml', self.contract)
+        self.assertIn('local_template', self.contract)
+        self.assertNotIn('embedded_template', self.contract)
 
 
 if __name__ == '__main__':
