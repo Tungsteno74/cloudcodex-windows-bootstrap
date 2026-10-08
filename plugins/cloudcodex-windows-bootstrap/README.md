@@ -1,4 +1,4 @@
-# CloudCodeX Windows Bootstrap - 0.6.1
+# CloudCodeX Windows Bootstrap - 0.6.2
 
 Multi-skill Windows validation for Codex Cloud through GitHub Actions. The plugin
 requires the configured GitHub app and ships no credentials, MCP server, or Windows

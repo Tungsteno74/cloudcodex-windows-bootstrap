@@ -49,8 +49,8 @@ class PackageTests(unittest.TestCase):
 
     def test_version_and_identity(self) -> None:
         self.assertEqual(self.manifest['name'], 'cloudcodex-windows-bootstrap')
-        self.assertEqual(self.manifest['version'], '0.6.1')
-        self.assertEqual(self.overlay['version'], '0.6.1')
+        self.assertEqual(self.manifest['version'], '0.6.2')
+        self.assertEqual(self.overlay['version'], '0.6.2')
         self.assertEqual(self.overlay['name'], self.manifest['name'])
         self.assertEqual(self.overlay['interface'], self.manifest['extensions']['com.openai']['interface'])
 

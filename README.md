@@ -75,7 +75,7 @@ and verifies reproducible ZIP output on Linux and Windows CI.
 
 ## Status
 
-**0.6.1 is pre-1.0.** Delegated AUTO, authorization escalation, managed cleanup,
+**0.6.2 is pre-1.0.** Delegated AUTO, authorization escalation, managed cleanup,
 and Local/Cloud Windows execution are validated. Remaining coverage focuses on
 strict deletion, fork, concurrency, interrupted execution, and lease conflicts.
 

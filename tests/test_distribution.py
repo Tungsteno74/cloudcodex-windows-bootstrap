@@ -31,7 +31,7 @@ class DistributionTests(unittest.TestCase):
         portable = json.loads((PACKAGE / 'plugin.json').read_text(encoding='utf-8'))
         for manifest in (native, portable):
             self.assertEqual(manifest['author']['name'], 'Tungsteno74')
-            self.assertEqual(manifest['version'], '0.6.1')
+            self.assertEqual(manifest['version'], '0.6.2')
         self.assertEqual(native['interface'], portable['extensions']['com.openai']['interface'])
         self.assertEqual(native['interface']['developerName'], 'Tungsteno74')
 

@@ -1,4 +1,4 @@
-# Shared execution contract — v0.6.1
+# Shared execution contract — v0.6.2
 
 This is an instruction contract, not an installed service, callback or permission
 grant. The current agent reads strategy instructions as needed.
@@ -174,7 +174,7 @@ authorization; if authorization is missing or ambiguous return
 WINDOWS_CI_BOOTSTRAP: <REUSED|COMPLETED|FAILED_CHECKS|PENDING|AWAITING_CONFIRMATION|AUTHORIZATION_REQUIRED|DEFERRED_TO_TASK|BLOCKED|DECLINED|NOT_APPLICABLE>
 run_id: <id>
 plugin: cloudcodex-windows-bootstrap
-plugin_version: 0.6.1
+plugin_version: 0.6.2
 phase: <onboarding|task|unknown>
 INTERACTION_CONTEXT: <delegated|interactive|unknown>
 ESCALATION_MODE: <CONFIRM|AUTO>
