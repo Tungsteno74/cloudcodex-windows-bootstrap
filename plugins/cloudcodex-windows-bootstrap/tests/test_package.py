@@ -17,8 +17,9 @@ STRATEGIES = (
 )
 
 
-def rendered_workflow() -> dict:
-    text = (ENTRY / 'references/ephemeral-workflow.yml.template').read_text()
+def rendered_workflow(template_text: str | None = None) -> dict:
+    text = (template_text if template_text is not None else
+            (ENTRY / 'references/ephemeral-workflow.yml.template').read_text())
     values = {
         '__RUN_ID__': 'fixture-001',
         '__SOURCE_SHORT_SHA__': 'bbbbbbb',
@@ -48,8 +49,8 @@ class PackageTests(unittest.TestCase):
 
     def test_version_and_identity(self) -> None:
         self.assertEqual(self.manifest['name'], 'cloudcodex-windows-bootstrap')
-        self.assertEqual(self.manifest['version'], '0.6.1')
-        self.assertEqual(self.overlay['version'], '0.6.1')
+        self.assertEqual(self.manifest['version'], '0.6.2')
+        self.assertEqual(self.overlay['version'], '0.6.2')
         self.assertEqual(self.overlay['name'], self.manifest['name'])
         self.assertEqual(self.overlay['interface'], self.manifest['extensions']['com.openai']['interface'])
 
@@ -196,6 +197,37 @@ class PackageTests(unittest.TestCase):
         self.assertRegex(checkout['uses'], r'^actions/checkout@[0-9a-f]{40}$')
         self.assertEqual(checkout['with']['ref'], 'b' * 40)
         self.assertIs(checkout['with']['persist-credentials'], False)
+
+    def test_embedded_template_is_canonical_and_independent_of_sidecar(self) -> None:
+        """A mounted SKILL.md suffices even when Cloud cannot read .template files."""
+        from unittest.mock import patch
+
+        canonical = (ENTRY / 'references/ephemeral-workflow.yml.template').read_text()
+        fence = re.escape(chr(96) * 3)
+        pattern = re.compile(
+            r'<!-- BEGIN SYNCED WINDOWS WORKFLOW TEMPLATE -->\n'
+            + fence + r'yaml\n(?P<yaml>.*?)\n' + fence
+            + r'\n<!-- END SYNCED WINDOWS WORKFLOW TEMPLATE -->',
+            re.DOTALL,
+        )
+        for name, skill_text in self.strategies.items():
+            with self.subTest(name=name):
+                matches = list(pattern.finditer(skill_text))
+                self.assertEqual(len(matches), 1)
+                embedded = matches[0].group('yaml') + '\n'
+                self.assertEqual(embedded, canonical)
+                with patch.object(Path, 'read_text',
+                                  side_effect=OSError('sidecar unmounted')):
+                    workflow = rendered_workflow(embedded)
+                self.assertEqual(workflow['on']['push']['branches'],
+                                 ['codex/windows-ci/fixture-001'])
+                self.assertEqual(workflow['permissions'], {'contents': 'read'})
+                job = workflow['jobs']['windows-validation']
+                self.assertEqual(job['runs-on'], 'windows-latest')
+                self.assertEqual(job['defaults']['run']['shell'], 'pwsh')
+                checkout = job['steps'][0]
+                self.assertIs(checkout['with']['persist-credentials'], False)
+                self.assertEqual(checkout['with']['ref'], 'b' * 40)
 
     def test_no_default_branch_or_pr_workflow(self) -> None:
         for name, text in self.strategies.items():

@@ -6,6 +6,8 @@
 - Managed branch validation and restoration.
 - Retained branch validation and source reset.
 - Workflow synthesis and matching-CI reuse.
+- Offline regression: embedded canonical template renders when auxiliary files
+  are inaccessible; a fresh Cloud runtime check is still required.
 - Cross-platform package validation and reproducible release artifacts.
 - Marketplace, manifest, permissions, and release-gate checks.
 

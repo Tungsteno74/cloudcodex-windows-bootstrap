@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 — 2026-10-08
+
+- Embed a verified copy of the Windows workflow template in each strategy SKILL.md so Cloud agents can materialize it without auxiliary resource mounts. Synchronize and test the inline/sidecar copies at build time.
+
 ## 0.6.1 — 2026-10-07
 
 - Reconcile ambiguous approval/tool outcomes against provider refs, marker commits, and Actions runs before retry or terminal reporting.

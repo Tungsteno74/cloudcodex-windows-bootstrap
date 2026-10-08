@@ -54,25 +54,28 @@ with `UNSAFE_EXISTING_AUTOMATION`; do not disable unrelated workflows.
 ## Local workflow materialization
 
 Prefer this skill's [local workflow template](references/windows-workflow.yml.template).
-Resolve against this skill's observed root, never against repository cwd or a
-sibling skill. Do not invent plugin IDs, URI schemes or mount paths. Do not require
-Plugin Creator or archive-editor access at runtime.
+Resolve it against the observed skill root, never the repository cwd or a sibling
+skill. Do not invent plugin IDs or mount paths or require Plugin Creator at runtime.
 
-If the local template is missing/unreadable/invalid, set
-`workflow_materialization: synthesized` and construct an equivalent workflow with
-all mandatory invariants:
-- exact literal `on.push.branches` for this strategy branch only;
-- one bounded `windows-latest` job, default shell `pwsh`;
-- `permissions: contents: read`, no secrets/OIDC/write token/self-hosted runner;
-- checkout exact `source_revision`, `persist-credentials: false`, verify HEAD;
-- trusted actions pinned to verified full SHAs, no moving tags;
-- only approved native Windows checks/setup;
-- `$ErrorActionPreference = 'Stop'` and explicit native failure propagation;
-- parse YAML, resolve placeholders and review the complete CI-only diff before any
-  remote Git object/ref write.
+If the auxiliary template is unreadable, missing or invalid, use the exact embedded
+YAML below and report workflow_materialization: embedded_template. Do not construct
+the YAML from prose merely because the auxiliary resource cannot be mounted.
+Verify all mandatory invariants:
 
-If an invariant cannot be verified, return `WORKFLOW_MATERIALIZATION_UNVERIFIED`.
-Materialization is not a new strategy/escalation and does not alter permissions.
+- an exact literal branch-only push trigger;
+- one bounded GitHub-hosted windows-latest job with pwsh;
+- contents-read permissions, no secrets, OIDC, write tokens or self-hosted runners;
+- exact source_revision checkout, persist-credentials: false and HEAD assertion;
+- trusted actions pinned to verified full SHA values;
+- only approved Windows checks and required setup;
+- explicit native-command failure propagation;
+- valid YAML, no unresolved placeholders and a reviewed CI-only diff before
+  any remote Git object/ref write.
+
+Only if both templates are unusable may the existing verified-synthesis fallback
+be applied. If any invariant cannot be verified, return
+WORKFLOW_MATERIALIZATION_UNVERIFIED. Materialization does not change strategy
+selection or authorization.
 
 ## Execute
 
@@ -98,3 +101,52 @@ Materialization is not a new strategy/escalation and does not alter permissions.
 
 FAILED_CHECKS, PENDING and auth/network/global failures do not escalate. Never move
 or repair the default branch.
+
+## Embedded workflow template (Cloud resource-loading fallback)
+
+This YAML is embedded in the loaded SKILL.md, with contents synchronized from the
+canonical authoring template by the release validator. Use it only when the local
+auxiliary template cannot be read. Substitute trusted literals and validate the
+resulting workflow before publishing.
+
+<!-- BEGIN SYNCED WINDOWS WORKFLOW TEMPLATE -->
+```yaml
+# TEMPLATE ONLY: substitute trusted literals and validate before committing.
+name: Codex Windows CI __RUN_ID__
+run-name: Windows checks __SOURCE_SHORT_SHA__ (__RUN_ID__)
+"on":
+  push:
+    branches:
+      - '__TEMP_BRANCH__'
+permissions:
+  contents: read
+jobs:
+  windows-validation:
+    runs-on: windows-latest
+    timeout-minutes: __TIMEOUT_MINUTES__
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout the exact source revision
+        uses: actions/checkout@__CHECKOUT_ACTION_SHA__
+        with:
+          ref: '__SOURCE_SHA__'
+          persist-credentials: false
+      - name: Verify source identity
+        env:
+          EXPECTED_SOURCE_SHA: '__SOURCE_SHA__'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $observed = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($observed.Trim() -ne $env:EXPECTED_SOURCE_SHA) {
+            throw 'Unexpected source revision; refusing to validate a different commit.'
+          }
+      # Insert only the language/tool setup required by the project, with verified pins.
+      - name: Run the selected native Windows checks
+        run: |
+          $ErrorActionPreference = 'Stop'
+          __WINDOWS_CHECK_COMMANDS__
+```
+<!-- END SYNCED WINDOWS WORKFLOW TEMPLATE -->

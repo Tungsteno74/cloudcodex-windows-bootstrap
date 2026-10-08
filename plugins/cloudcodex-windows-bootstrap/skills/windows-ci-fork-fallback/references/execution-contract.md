@@ -1,4 +1,4 @@
-# Shared execution contract — v0.6.1
+# Shared execution contract — v0.6.2
 
 This is an instruction contract, not an installed service, callback or permission
 grant. The current agent reads strategy instructions as needed.
@@ -68,15 +68,20 @@ managed CI commit may add the temporary workflow but is never merged.
 
 ## Workflow requirements
 
-Prefer the executing strategy's own `references/windows-workflow.yml.template`,
-resolved from its observed skill root. Strategy-local contracts and templates are
-runtime dependencies; sibling-skill file paths are not. If the local template
-cannot be read or is invalid, construct an equivalent workflow from the mandatory
-invariants embedded in that strategy. Materialization alone needs no new consent
-for the same authorized plan. Validate YAML, pins, commands and the complete
-planned diff before any remote Git object/ref write. If verification is incomplete,
-stop with `WORKFLOW_MATERIALIZATION_UNVERIFIED`. Do not use Plugin Creator/editor
-tools as a runtime template dependency.
+First read the executing strategy's own references/windows-workflow.yml.template
+relative to its observed skill root; never depend on sibling skill paths or plugin
+editor tools. If the sidecar cannot be loaded or is invalid, use the exact embedded YAML
+in the already loaded strategy SKILL.md and report workflow_materialization:
+embedded_template. Its content is synchronized from the canonical source at package-
+validation time. Do not synthesize a workflow solely because the auxiliary file is
+missing.
+
+Only if neither template source can be materialized may the strategy synthesize an
+equivalent workflow from its mandatory invariants. Materialization does not grant
+permissions or require new consent within the same authorized plan. Validate YAML, SHA
+pins, substituted checks, absence of unresolved placeholders, and the complete planned
+diff before any remote Git object/ref write. If verification is incomplete, stop with
+WORKFLOW_MATERIALIZATION_UNVERIFIED.
 
 Mandatory invariants:
 - only `on.push.branches` for the exact strategy branch;
@@ -169,7 +174,7 @@ authorization; if authorization is missing or ambiguous return
 WINDOWS_CI_BOOTSTRAP: <REUSED|COMPLETED|FAILED_CHECKS|PENDING|AWAITING_CONFIRMATION|AUTHORIZATION_REQUIRED|DEFERRED_TO_TASK|BLOCKED|DECLINED|NOT_APPLICABLE>
 run_id: <id>
 plugin: cloudcodex-windows-bootstrap
-plugin_version: 0.6.1
+plugin_version: 0.6.2
 phase: <onboarding|task|unknown>
 INTERACTION_CONTEXT: <delegated|interactive|unknown>
 ESCALATION_MODE: <CONFIRM|AUTO>
@@ -189,7 +194,7 @@ unpublished_changes: <excluded|none|not_observed>
 execution_repository: <owner/repo or none>
 baseline_revision: <managed baseline SHA or none>
 ci_revision: <full SHA or none>
-workflow_materialization: <local_template|synthesized|not_prepared>
+workflow_materialization: <local_template|embedded_template|synthesized|not_prepared>
 template_read_status: <read|unavailable|invalid|not_attempted>
 template_locator: <actual observed locator or none>
 actions_run: <run id/URL or none>

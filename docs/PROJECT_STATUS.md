@@ -1,6 +1,6 @@
 # Project status
 
-Current state: **0.6.1 pre-1.0**.
+Current state: **0.6.2 pre-1.0**.
 
 ## Done
 
