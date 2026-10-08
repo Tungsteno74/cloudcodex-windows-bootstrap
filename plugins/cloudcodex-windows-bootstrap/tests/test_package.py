@@ -19,7 +19,7 @@ STRATEGIES = (
 
 def rendered_workflow(template_text: str | None = None) -> dict:
     text = (template_text if template_text is not None else
-            (ENTRY / 'references/ephemeral-workflow.yml.template').read_text())
+            (ENTRY / 'assets/windows-workflow.yml').read_text())
     values = {
         '__RUN_ID__': 'fixture-001',
         '__SOURCE_SHORT_SHA__': 'bbbbbbb',
@@ -49,8 +49,8 @@ class PackageTests(unittest.TestCase):
 
     def test_version_and_identity(self) -> None:
         self.assertEqual(self.manifest['name'], 'cloudcodex-windows-bootstrap')
-        self.assertEqual(self.manifest['version'], '0.6.2')
-        self.assertEqual(self.overlay['version'], '0.6.2')
+        self.assertEqual(self.manifest['version'], '0.6.4')
+        self.assertEqual(self.overlay['version'], '0.6.4')
         self.assertEqual(self.overlay['name'], self.manifest['name'])
         self.assertEqual(self.overlay['interface'], self.manifest['extensions']['com.openai']['interface'])
 
@@ -130,11 +130,12 @@ class PackageTests(unittest.TestCase):
             self.assertNotIn('../windows-ci-', text, name)
 
     def test_strategy_local_contracts_exist(self) -> None:
-        refs = ('execution-contract.md', 'github-access.md', 'github-constraints.md', 'windows-workflow.yml.template')
+        refs = ('execution-contract.md', 'github-access.md', 'github-constraints.md')
         for name in STRATEGIES:
             root = ROOT / 'skills' / name / 'references'
             for ref in refs:
                 self.assertTrue((root / ref).is_file(), f'{name}/{ref}')
+            self.assertTrue((ROOT / 'skills' / name / 'assets/windows-workflow.yml').is_file())
 
     def test_local_contracts_match_canonical(self) -> None:
         canonical = ENTRY / 'references'
@@ -142,8 +143,8 @@ class PackageTests(unittest.TestCase):
             local = ROOT / 'skills' / name / 'references'
             for ref in ('execution-contract.md', 'github-access.md', 'github-constraints.md'):
                 self.assertEqual((local / ref).read_bytes(), (canonical / ref).read_bytes())
-            self.assertEqual((local / 'windows-workflow.yml.template').read_bytes(),
-                             (canonical / 'ephemeral-workflow.yml.template').read_bytes())
+            self.assertEqual((ROOT / 'skills' / name / 'assets/windows-workflow.yml').read_bytes(),
+                             (ENTRY / 'assets/windows-workflow.yml').read_bytes())
 
     def test_context_aware_mode_precedence(self) -> None:
         ordered = [
@@ -198,36 +199,25 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(checkout['with']['ref'], 'b' * 40)
         self.assertIs(checkout['with']['persist-credentials'], False)
 
-    def test_embedded_template_is_canonical_and_independent_of_sidecar(self) -> None:
-        """A mounted SKILL.md suffices even when Cloud cannot read .template files."""
-        from unittest.mock import patch
-
-        canonical = (ENTRY / 'references/ephemeral-workflow.yml.template').read_text()
-        fence = re.escape(chr(96) * 3)
-        pattern = re.compile(
-            r'<!-- BEGIN SYNCED WINDOWS WORKFLOW TEMPLATE -->\n'
-            + fence + r'yaml\n(?P<yaml>.*?)\n' + fence
-            + r'\n<!-- END SYNCED WINDOWS WORKFLOW TEMPLATE -->',
-            re.DOTALL,
-        )
+    def test_workflow_assets_are_canonical_and_not_embedded(self) -> None:
+        canonical = (ENTRY / 'assets/windows-workflow.yml').read_bytes()
+        self.assertEqual(len(canonical), 1248)
+        self.assertNotIn(b'\r', canonical)
+        self.assertFalse(canonical.startswith(b'\xef\xbb\xbf'))
         for name, skill_text in self.strategies.items():
             with self.subTest(name=name):
-                matches = list(pattern.finditer(skill_text))
-                self.assertEqual(len(matches), 1)
-                embedded = matches[0].group('yaml') + '\n'
-                self.assertEqual(embedded, canonical)
-                with patch.object(Path, 'read_text',
-                                  side_effect=OSError('sidecar unmounted')):
-                    workflow = rendered_workflow(embedded)
-                self.assertEqual(workflow['on']['push']['branches'],
-                                 ['codex/windows-ci/fixture-001'])
-                self.assertEqual(workflow['permissions'], {'contents': 'read'})
-                job = workflow['jobs']['windows-validation']
-                self.assertEqual(job['runs-on'], 'windows-latest')
-                self.assertEqual(job['defaults']['run']['shell'], 'pwsh')
-                checkout = job['steps'][0]
-                self.assertIs(checkout['with']['persist-credentials'], False)
-                self.assertEqual(checkout['with']['ref'], 'b' * 40)
+                template_path = ROOT / 'skills' / name / 'assets/windows-workflow.yml'
+                self.assertEqual(template_path.read_bytes(), canonical)
+                self.assertIn('assets/windows-workflow.yml', skill_text)
+                self.assertIn('synthesized', skill_text)
+                self.assertNotIn('BEGIN SYNCED WINDOWS WORKFLOW TEMPLATE', skill_text)
+                self.assertNotIn('embedded_template', skill_text)
+        workflow = rendered_workflow(canonical.decode('utf-8'))
+        self.assertEqual(workflow['on']['push']['branches'],
+                         ['codex/windows-ci/fixture-001'])
+        self.assertEqual(workflow['permissions'], {'contents': 'read'})
+        self.assertEqual(workflow['jobs']['windows-validation']['runs-on'],
+                         'windows-latest')
 
     def test_no_default_branch_or_pr_workflow(self) -> None:
         for name, text in self.strategies.items():

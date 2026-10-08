@@ -1,4 +1,4 @@
-# CloudCodeX Windows Bootstrap - 0.6.2
+# CloudCodeX Windows Bootstrap - 0.6.4
 
 Multi-skill Windows validation for Codex Cloud through GitHub Actions. The plugin
 requires the configured GitHub app and ships no credentials, MCP server, or Windows
@@ -71,15 +71,17 @@ provider refs plus marker commits and never depends on an invented
 
 ## Package resources
 
-Each strategy contains local copies of its execution contract, GitHub constraints,
-and workflow template. The bootstrap reference directory is the authoring source;
-the synchronization tools keep strategy copies aligned.
+Each strategy contains local copies of its execution contract and GitHub
+constraints under `references/`, plus a YAML workflow template at
+`assets/windows-workflow.yml`. The bootstrap asset is the canonical
+authoring source; synchronization keeps strategy-local assets byte-identical.
+Templates are no longer embedded in SKILL.md.
 
-If Cloud cannot read a strategy's bundled workflow template, that strategy first
-uses the exact YAML embedded in its SKILL.md. The validator keeps these copies
-synchronized with the canonical template. Verified synthesis remains a last
-resort if both template sources are unusable. This does not fix host-side
-resource mounting.
+Cloud resource-loader probes confirmed that normal `.yml` and `.yaml`
+files are readable in `assets/` and `references/`, while files whose
+last suffix is `.template` are not registered as resources. Verified synthesis
+is retained only as a last-resort fallback if the actual asset is unavailable.
+All authorization and workflow invariants remain enforced.
 
 See the repository documentation for installation, release status, and remaining
 end-to-end coverage. Licensed under MIT.

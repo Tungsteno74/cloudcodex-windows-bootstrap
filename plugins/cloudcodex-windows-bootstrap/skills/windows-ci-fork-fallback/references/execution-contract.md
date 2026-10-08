@@ -1,4 +1,4 @@
-# Shared execution contract — v0.6.2
+# Shared execution contract — v0.6.4
 
 This is an instruction contract, not an installed service, callback or permission
 grant. The current agent reads strategy instructions as needed.
@@ -68,26 +68,26 @@ managed CI commit may add the temporary workflow but is never merged.
 
 ## Workflow requirements
 
-First read the executing strategy's own references/windows-workflow.yml.template
-relative to its observed skill root; never depend on sibling skill paths or plugin
-editor tools. If the sidecar cannot be loaded or is invalid, use the exact embedded YAML
-in the already loaded strategy SKILL.md and report workflow_materialization:
-embedded_template. Its content is synchronized from the canonical source at package-
-validation time. Do not synthesize a workflow solely because the auxiliary file is
-missing.
+Load the executing strategy's own asset at assets/windows-workflow.yml
+through its registered skill resource, or through its observed skill root.
+This is an independent strategy-local file: never depend on sibling skill
+paths, repository cwd, or plugin editor tools. Validate the YAML, verified
+substitutions, SHA pins, selected checks and complete CI-only diff before
+any remote Git object/ref write.
 
-Only if neither template source can be materialized may the strategy synthesize an
-equivalent workflow from its mandatory invariants. Materialization does not grant
-permissions or require new consent within the same authorized plan. Validate YAML, SHA
-pins, substituted checks, absence of unresolved placeholders, and the complete planned
-diff before any remote Git object/ref write. If verification is incomplete, stop with
-WORKFLOW_MATERIALIZATION_UNVERIFIED.
+If the asset cannot be loaded or is invalid, the strategy may synthesize an
+equivalent workflow as a last resort, using only the mandatory invariants.
+Do not report a successful asset read when a fallback was used. Report
+workflow_materialization: synthesized and the actual template_read_status.
+If full verification is impossible, return
+WORKFLOW_MATERIALIZATION_UNVERIFIED without remote writes. The fallback
+does not change permissions, approval requirements or the task scope.
 
 Mandatory invariants:
-- only `on.push.branches` for the exact strategy branch;
-- one bounded GitHub-hosted `windows-latest` job;
-- `permissions: contents: read`, no secrets/OIDC/write token;
-- checkout exact `source_revision` with `persist-credentials: false` and verify HEAD;
+- only on.push.branches for the exact strategy branch;
+- one bounded GitHub-hosted windows-latest job;
+- permissions: contents: read, no secrets/OIDC/write token;
+- checkout exact source_revision with persist-credentials: false and verify HEAD;
 - trusted actions pinned to verified full SHAs when repo policy permits;
 - only native Windows checks from the selected test plan;
 - explicit native-command failure propagation and finite timeout;
@@ -174,7 +174,7 @@ authorization; if authorization is missing or ambiguous return
 WINDOWS_CI_BOOTSTRAP: <REUSED|COMPLETED|FAILED_CHECKS|PENDING|AWAITING_CONFIRMATION|AUTHORIZATION_REQUIRED|DEFERRED_TO_TASK|BLOCKED|DECLINED|NOT_APPLICABLE>
 run_id: <id>
 plugin: cloudcodex-windows-bootstrap
-plugin_version: 0.6.2
+plugin_version: 0.6.4
 phase: <onboarding|task|unknown>
 INTERACTION_CONTEXT: <delegated|interactive|unknown>
 ESCALATION_MODE: <CONFIRM|AUTO>
@@ -194,7 +194,7 @@ unpublished_changes: <excluded|none|not_observed>
 execution_repository: <owner/repo or none>
 baseline_revision: <managed baseline SHA or none>
 ci_revision: <full SHA or none>
-workflow_materialization: <local_template|embedded_template|synthesized|not_prepared>
+workflow_materialization: <local_template|synthesized|not_prepared>
 template_read_status: <read|unavailable|invalid|not_attempted>
 template_locator: <actual observed locator or none>
 actions_run: <run id/URL or none>

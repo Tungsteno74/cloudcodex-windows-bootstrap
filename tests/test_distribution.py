@@ -31,7 +31,7 @@ class DistributionTests(unittest.TestCase):
         portable = json.loads((PACKAGE / 'plugin.json').read_text(encoding='utf-8'))
         for manifest in (native, portable):
             self.assertEqual(manifest['author']['name'], 'Tungsteno74')
-            self.assertEqual(manifest['version'], '0.6.2')
+            self.assertEqual(manifest['version'], '0.6.4')
         self.assertEqual(native['interface'], portable['extensions']['com.openai']['interface'])
         self.assertEqual(native['interface']['developerName'], 'Tungsteno74')
 
@@ -73,6 +73,18 @@ class DistributionTests(unittest.TestCase):
             self.assertIsNone(re.search(r'\bPlugin_[0-9a-f]{16,}\b', text), str(path))
             self.assertIsNone(re.search(r'[A-Za-z]:\\Users\\', text), str(path))
             self.assertIsNone(re.search(r'\b(?:ghp_|github_pat_)[A-Za-z0-9_]{20,}', text), str(path))
+
+    def test_canonical_workflow_assets_have_supported_extension(self) -> None:
+        template = PACKAGE / 'skills/github-actions-windows-bootstrap/assets/windows-workflow.yml'
+        self.assertTrue(template.is_file())
+        for directory in (PACKAGE / 'skills').iterdir():
+            if not directory.is_dir():
+                continue
+            self.assertFalse(list(directory.rglob('*.template')))
+        for strategy in ('windows-ci-managed-branch', 'windows-ci-ephemeral-branch',
+                         'windows-ci-fork-fallback'):
+            target = PACKAGE / 'skills' / strategy / 'assets/windows-workflow.yml'
+            self.assertEqual(target.read_bytes(), template.read_bytes())
 
     def test_artifact_is_complete_single_plugin(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

@@ -7,7 +7,8 @@ Use the native tooling already present; avoid dependencies or abstraction withou
 Use clear names, type hints, small testable functions and PEP 8 for Python tooling.
 
 `plugins/cloudcodex-windows-bootstrap/` is the complete distributable package.
-The bootstrap's reference directory is the canonical source of shared contracts/templates;
+The bootstrap reference directory is canonical for shared contracts, and its
+assets/ directory holds the canonical YAML workflow template;
 use its existing sync tool to update strategy-local copies, then verify their equality.
 Do not change runtime policy just to make a packaging test pass. Distinguish source revision,
 synthetic CI revision and managed baseline; never weaken authorization or cleanup guards.

@@ -15,11 +15,11 @@ STRATEGIES = (
 def synchronize(root: Path, *, write: bool = False) -> list[str]:
     """Return divergent relative paths; write only with an explicit caller choice."""
     # The bootstrap template is the authoring source; strategies ship local runtime copies.
-    source = root / "skills/github-actions-windows-bootstrap/references/ephemeral-workflow.yml.template"
+    source = root / "skills/github-actions-windows-bootstrap/assets/windows-workflow.yml"
     content = source.read_bytes()
     divergent: list[str] = []
     for strategy in STRATEGIES:
-        target = root / "skills" / strategy / "references/windows-workflow.yml.template"
+        target = root / "skills" / strategy / "assets/windows-workflow.yml"
         if target.exists() and target.read_bytes() == content:
             continue
         divergent.append(target.relative_to(root).as_posix())
