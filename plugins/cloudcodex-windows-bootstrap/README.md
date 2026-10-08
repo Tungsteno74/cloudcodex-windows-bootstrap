@@ -75,9 +75,11 @@ Each strategy contains local copies of its execution contract, GitHub constraint
 and workflow template. The bootstrap reference directory is the authoring source;
 the synchronization tools keep strategy copies aligned.
 
-If a workflow template cannot be read at runtime, the strategy may synthesize an
-equivalent workflow from the same mandatory invariants and validate it before any
-remote write.
+If Cloud cannot read a strategy's bundled workflow template, that strategy first
+uses the exact YAML embedded in its SKILL.md. The validator keeps these copies
+synchronized with the canonical template. Verified synthesis remains a last
+resort if both template sources are unusable. This does not fix host-side
+resource mounting.
 
 See the repository documentation for installation, release status, and remaining
 end-to-end coverage. Licensed under MIT.

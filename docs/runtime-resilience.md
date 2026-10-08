@@ -15,8 +15,10 @@ document separates responsibilities and defines safe recovery.
 - **Ambiguous write/approval outcome:** a write tool may report approval/failure while
   refs, commits and Actions continue asynchronously. Never equate that first response
   with a guaranteed no-op.
-- **Resource mounting:** packaged templates can be unavailable on some hosts. The
-  strategy-local synthesis fallback remains valid when all invariants are verified.
+- **Resource mounting:** auxiliary templates can be unavailable on some Cloud hosts.
+  Every strategy now embeds the canonical YAML directly in its SKILL.md; this
+  deterministic fallback precedes guarded synthesis and does not repair the
+  platform's resource mount itself.
 - **Agent path drift:** no `managed-state.md` resource exists. Managed state is the
   provider ref/marker history plus the run journal.
 

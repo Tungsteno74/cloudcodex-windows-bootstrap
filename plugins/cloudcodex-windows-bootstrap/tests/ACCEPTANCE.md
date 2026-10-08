@@ -13,6 +13,7 @@ End-to-end Cloud cases; package unit tests do not prove model dispatch or caller
 | DEFERRED_TO_TASK inherited | Resume Windows validation; recompute default mode from actual task context unless same-run explicit user choice is verified. |
 | Parent delegation is positive but handoff fields are missing | BLOCKED/returned_to_caller with exact missing repository/SHA/checks/authorization/context; no vague prompt and no writes. |
 | Generic `setup refresh had errors` warning but concrete skill/resources are readable | Continue; do not recreate/republish the environment solely for the warning. |
+| Cloud cannot read bundled .template sidecar but SKILL.md is available | Render the canonical embedded YAML, report embedded_template, verify invariants; do not improvise merely due to unavailable sidecar. |
 | Write/approval result is ambiguous or task state is stale | Reconcile exact provider refs/commits/runs before retry or terminal no-write reporting; preserve the same run_id. |
 | Managed strategy state lookup | Use provider ref/marker + run journal; never require `managed-state.md`. |
 | Delegated AUTO reaches action outside current authorization | AUTHORIZATION_REQUIRED/provider approval; no invented consent. |

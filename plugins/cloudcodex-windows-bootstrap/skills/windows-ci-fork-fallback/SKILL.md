@@ -38,14 +38,20 @@ deleted.
 
 ## Local workflow materialization
 
-Prefer [local workflow template](references/windows-workflow.yml.template) from this
-skill root. Never read a sibling template or require Plugin Creator at runtime.
-If unavailable/invalid, synthesize an equivalent workflow only when mandatory
-invariants are verifiable: exact branch trigger; bounded `windows-latest`/pwsh job;
-contents-read only; exact source checkout with `persist-credentials: false` and
-HEAD assertion; verified full-SHA actions; approved Windows checks; explicit failure
-propagation; YAML/pin/diff validation before remote writes. Otherwise return
-`WORKFLOW_MATERIALIZATION_UNVERIFIED`.
+Prefer this skill's [local workflow template](references/windows-workflow.yml.template),
+resolved from this skill root. Never read sibling templates or require Plugin Creator at
+runtime.
+
+If the auxiliary resource is unavailable or invalid, use the exact embedded YAML below
+and report workflow_materialization: embedded_template. Do not reconstruct the workflow
+from general instructions merely because the sidecar file was not mounted. Enforce exact
+branch-only trigger, one bounded windows-latest/pwsh job, contents-read only, source SHA
+checkout with persist-credentials: false and HEAD assertion, verified full-SHA actions,
+approved Windows checks, explicit error propagation, and YAML/pin/diff verification
+before any remote write.
+
+Only if both sources are unusable may an equivalent workflow be synthesized under the
+same verified invariants. Otherwise return WORKFLOW_MATERIALIZATION_UNVERIFIED.
 
 ## Execute
 
@@ -67,3 +73,52 @@ Leave pre-existing forks untouched except exact run-owned refs/baselines authori
 by the strategy. FAILED_CHECKS, PENDING or post-write cleanup problems do not fall
 through to another execution strategy. A preflight-only fork blocker may return to
 the bootstrap router for terminal retained consideration when still eligible.
+
+## Embedded workflow template (Cloud resource-loading fallback)
+
+This YAML is embedded in the loaded SKILL.md, with contents synchronized from the
+canonical authoring template by the release validator. Use it only when the local
+auxiliary template cannot be read. Substitute trusted literals and validate the
+resulting workflow before publishing.
+
+<!-- BEGIN SYNCED WINDOWS WORKFLOW TEMPLATE -->
+```yaml
+# TEMPLATE ONLY: substitute trusted literals and validate before committing.
+name: Codex Windows CI __RUN_ID__
+run-name: Windows checks __SOURCE_SHORT_SHA__ (__RUN_ID__)
+"on":
+  push:
+    branches:
+      - '__TEMP_BRANCH__'
+permissions:
+  contents: read
+jobs:
+  windows-validation:
+    runs-on: windows-latest
+    timeout-minutes: __TIMEOUT_MINUTES__
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout the exact source revision
+        uses: actions/checkout@__CHECKOUT_ACTION_SHA__
+        with:
+          ref: '__SOURCE_SHA__'
+          persist-credentials: false
+      - name: Verify source identity
+        env:
+          EXPECTED_SOURCE_SHA: '__SOURCE_SHA__'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $observed = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($observed.Trim() -ne $env:EXPECTED_SOURCE_SHA) {
+            throw 'Unexpected source revision; refusing to validate a different commit.'
+          }
+      # Insert only the language/tool setup required by the project, with verified pins.
+      - name: Run the selected native Windows checks
+        run: |
+          $ErrorActionPreference = 'Stop'
+          __WINDOWS_CHECK_COMMANDS__
+```
+<!-- END SYNCED WINDOWS WORKFLOW TEMPLATE -->

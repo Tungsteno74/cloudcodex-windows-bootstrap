@@ -55,14 +55,22 @@ marker/parent/terminal run. Otherwise `MANAGED_BRANCH_CONFLICT`; never force unk
 
 ## Local workflow materialization
 
-Prefer [local workflow template](references/windows-workflow.yml.template) from this
-skill root. Never resolve via sibling skill or repository cwd. Do not require Plugin
-Creator at runtime. If unreadable/invalid, synthesize an equivalent workflow only
-when all invariants can be verified: exact branch trigger; one bounded
-`windows-latest`/pwsh job; contents-read token; exact source checkout with
-`persist-credentials: false` and HEAD assertion; verified full-SHA actions; approved
-Windows checks only; explicit failure propagation; complete YAML/pin/diff validation
-before remote object/ref writes. Otherwise `WORKFLOW_MATERIALIZATION_UNVERIFIED`.
+Prefer this skill's [local workflow template](references/windows-workflow.yml.template),
+resolved from this skill root. Never use a sibling skill path, repository cwd, or Plugin
+Creator at runtime.
+
+If the auxiliary template is missing, unreadable or invalid, use the exact embedded YAML
+below and report workflow_materialization: embedded_template. Do not improvise a
+workflow merely because a bundled resource was not mounted. Both routes must preserve
+the exact branch trigger, one bounded windows-latest job with pwsh, contents-read
+permissions, full-SHA verified actions, checkout of the exact source commit with
+credentials disabled and HEAD assertion, approved Windows checks, and explicit native-
+command failure propagation.
+
+Only if neither template can be used may a workflow be synthesized, and only if every
+invariant can still be verified. Validate YAML, all substitutions, pins, check commands
+and the complete CI-only diff before any remote object/ref write. Otherwise return
+WORKFLOW_MATERIALIZATION_UNVERIFIED.
 
 ## Execute
 
@@ -89,3 +97,52 @@ before remote object/ref writes. Otherwise `WORKFLOW_MATERIALIZATION_UNVERIFIED`
 If reset fails or tip changed, `cleanup: required`; do not start another execution
 strategy after managed published or started a run. FAILED_CHECKS is final evidence,
 not escalation.
+
+## Embedded workflow template (Cloud resource-loading fallback)
+
+This YAML is embedded in the loaded SKILL.md, with contents synchronized from the
+canonical authoring template by the release validator. Use it only when the local
+auxiliary template cannot be read. Substitute trusted literals and validate the
+resulting workflow before publishing.
+
+<!-- BEGIN SYNCED WINDOWS WORKFLOW TEMPLATE -->
+```yaml
+# TEMPLATE ONLY: substitute trusted literals and validate before committing.
+name: Codex Windows CI __RUN_ID__
+run-name: Windows checks __SOURCE_SHORT_SHA__ (__RUN_ID__)
+"on":
+  push:
+    branches:
+      - '__TEMP_BRANCH__'
+permissions:
+  contents: read
+jobs:
+  windows-validation:
+    runs-on: windows-latest
+    timeout-minutes: __TIMEOUT_MINUTES__
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout the exact source revision
+        uses: actions/checkout@__CHECKOUT_ACTION_SHA__
+        with:
+          ref: '__SOURCE_SHA__'
+          persist-credentials: false
+      - name: Verify source identity
+        env:
+          EXPECTED_SOURCE_SHA: '__SOURCE_SHA__'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $observed = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($observed.Trim() -ne $env:EXPECTED_SOURCE_SHA) {
+            throw 'Unexpected source revision; refusing to validate a different commit.'
+          }
+      # Insert only the language/tool setup required by the project, with verified pins.
+      - name: Run the selected native Windows checks
+        run: |
+          $ErrorActionPreference = 'Stop'
+          __WINDOWS_CHECK_COMMANDS__
+```
+<!-- END SYNCED WINDOWS WORKFLOW TEMPLATE -->
