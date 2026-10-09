@@ -49,7 +49,7 @@ class ContinuityAndDiscoveryTests(unittest.TestCase):
     def test_package_editor_is_diagnostic_not_runtime_fallback(self) -> None:
         for fragment in ("do not substitute for loading the installed strategy",
                          "Plugin Creator is not a runtime dependency",
-                         "Do not synthesize a whole strategy"):
+                         "Never silently invent a *different* strategy"):
             self.assertIn(fragment, self.contract)
 
     def test_optional_asset_synthesis_is_retained(self) -> None:
@@ -105,6 +105,43 @@ class ContinuityAndDiscoveryTests(unittest.TestCase):
                       "decision_context_status:", "decision_context_locator:",
                       "decision_context_durability:", "authorization_origin:", "authorization_scope:"):
             self.assertEqual(self.contract.count(field), 1, field)
+
+    def test_guarded_reconstruction_requires_authoritative_invariants(self) -> None:
+        for phrase in (
+            "Guarded same-strategy reconstruction",
+            "without an explicit denial",
+            "already loaded authoritative",
+            "required safeguard",
+            "AUTHORIZATION_REQUIRED",
+            "handoff_status: returned_to_caller",
+            "strategy_materialization: reconstructed",
+            "No remote write",
+        ):
+            self.assertIn(phrase.lower(), self.contract.lower())
+        self.assertIn("same-strategy reconstruction", self.router)
+        self.assertNotIn("Do not synthesize a whole strategy", self.contract)
+
+    def test_reconstructed_strategies_keep_cleanup_guards(self) -> None:
+        for phrase in (
+            "codex/windows-ci/<run-id>",
+            "delete_ref",
+            "Ephemeral retained",
+            "Managed branch",
+            "codex/windows-ci-managed",
+            "codex-windows-ci-managed.yml",
+            "cloudcodex-windows-bootstrap managed baseline v1",
+            "cloudcodex-windows-bootstrap managed ci v1",
+            "expected_sha",
+            "Fork fallback",
+            "preserved visibility",
+            "Unknown marker/tip blocks",
+        ):
+            self.assertIn(phrase, self.contract)
+
+    def test_runtime_resilience_has_no_specific_version_instructions(self) -> None:
+        runtime = text(ROOT.parent.parent / "docs/runtime-resilience.md")
+        self.assertNotIn("version 0.6.", runtime.lower())
+        self.assertIn("return BLOCKED or AUTHORIZATION_REQUIRED", runtime)
 
     def test_shared_contracts_are_distributed_without_yaml_changes(self) -> None:
         for strategy in STRATEGIES:

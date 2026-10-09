@@ -113,8 +113,66 @@ Package-editor reads or public repository copies may diagnose publication but do
 not substitute for loading the installed strategy. Plugin Creator is not a runtime
 dependency. A missing optional YAML asset is separate from missing required strategy
 instructions: existing verified workflow synthesis remains available only after the
-strategy instructions and mandatory invariants are known. Do not synthesize a whole
-strategy or install another plugin to bypass a missing or denied skill.
+strategy instructions and mandatory invariants are known.
+
+## Guarded same-strategy reconstruction — exceptional last resort
+
+If the installed strategy remains unreadable after bounded name/locator discovery
+without an explicit denial, authority restriction or version/identity mismatch,
+the active bootstrap may reconstruct a *run-local plan for the same routed
+strategy*. This does not install or rewrite a skill, invent a strategy, or grant
+authorization. A temporary diagnostic constraint from one gate is not permanent
+runtime policy.
+
+Before any external write:
+
+1. The bootstrap, shared contracts, active run context and normal routing must
+   remain available and valid. Preserve the strict-first and CONFIRM/AUTO rules.
+2. Establish all target-strategy invariants from the already loaded authoritative
+   context, verified release-specific metadata or independently verified provider
+   evidence. A strategy name, undocumented guess, untrusted repository copy or
+   previous unrelated success is insufficient.
+3. Validate identity and exact source/CI SHA, permissions, run ownership,
+   workflow-only diff, SHA-pinned actions, trigger, observation, concurrency,
+   retention, cleanup and idempotent reconciliation before changing provider state.
+4. If any required safeguard cannot be independently established, return
+   `BLOCKED` with `handoff_status: returned_to_caller`, exact missing
+   invariants and no remote writes; explicitly escalate to the Root. When user
+   authorization is insufficient, return `AUTHORIZATION_REQUIRED` to Root.
+   Access denial and identity/version mismatch never authorize reconstruction.
+5. Only a verified *same-strategy* plan may execute. Report
+   `strategy_materialization: reconstructed` with source and verification
+   evidence. Do not claim a missing skill was loaded or create plugin files.
+
+Minimum strategy-specific guarantees, additional to shared invariants:
+
+- **Ephemeral strict:** verified authorized `delete_ref` before publication,
+  safe push-automation preflight, unique collision-checked branch
+  `codex/windows-ci/<run-id>`, CI-only workflow against pinned source SHA,
+  one correlated Windows run, and deletion only of the unchanged run-owned CI
+  branch after the run is terminal. Cleanup failure is `cleanup: required`.
+- **Ephemeral retained:** only an explicit CONFIRM selection or terminal AUTO
+  route can relax deletion. Disclose persistence before write; when permitted,
+  restore the owned CI ref to the source SHA with an expected-SHA lease, or report
+  the retained CI tip accurately.
+- **Managed branch:** require `codex/windows-ci-managed` and
+  `.github/workflows/codex-windows-ci-managed.yml`, validated ownership
+  markers `cloudcodex-windows-bootstrap managed baseline v1` and
+  `cloudcodex-windows-bootstrap managed ci v1`; an existing baseline must
+  have exactly one parent and an identical tree. Verify no active/conflicting
+  run, owned workflow path, safe publication/restoration automation and forced
+  `expected_sha` lease capability. Create the no-diff source-parent baseline
+  and a CI-workflow-only child commit, observe the exact Windows job, restore
+  CI to baseline with lease, then read back. Unknown marker/tip blocks.
+- **Fork fallback:** require a router-eligible source-side blocker, explicitly
+  authorized fork destination with preserved visibility, creation/Actions
+  capabilities and a complete separately authorized cleanup/retention plan.
+  Never infer fork permissions, create unrelated forks or weaken visibility.
+
+Missing `delete_ref` blocks strict ephemeral but not independently eligible
+managed execution. Exceptional YAML synthesis is a separate fallback, allowed only
+when all strategy and workflow invariants can be independently verified.
+Never silently invent a *different* strategy, bypass denied access or infer consent.
 
 ## GitHub transport
 
@@ -250,6 +308,8 @@ ESCALATION_MODE_SOURCE: <explicit_user|resumed_explicit|delegated_default|intera
 skills_used: <actually loaded skill names>
 skill_discovery_status: <loaded|loaded_by_locator|unlisted_unresolved|resource_unavailable|reader_unavailable|version_mismatch|denied|not_attempted>
 skill_discovery_evidence: <supported reader, observed locator/version and sanitized result; or none>
+strategy_materialization: <installed|loaded_by_locator|reconstructed|not_prepared>
+strategy_reconstruction_evidence: <verified invariant sources and route; or none>
 decision_context_status: <reused|updated|missing|invalidated|not_needed>
 decision_context_locator: <actual journal or caller-returned record reference; or none>
 decision_context_durability: <volatile|durable|result_only|unavailable>

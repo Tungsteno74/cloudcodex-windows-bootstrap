@@ -45,6 +45,10 @@ Primary live gates:
 | Strategy omitted from filtered listing, known same-release locator readable | Load through supported reader and verify identity/version before proceeding. |
 | Direct reader reports a denial | Stop; do not search for a permission bypass. |
 | Locator resolves stale or different instructions | At most one supported refresh; never silently substitute versions. |
-| Package-editor read succeeds but installed strategy is unavailable | Diagnostic evidence only; do not replace the installed strategy. |
+| Package-editor read succeeds but installed strategy is unavailable | Diagnostic evidence only; no substitute for an unrelated or stale skill. |
+| Strategy is unreadable; same-run authoritative invariants are verified | Reconstruct the *same* router-selected run-local plan with provenance; no invented strategy. |
+| Unknown marker, ownership, lease, ref deletion, fork cleanup or workflow guard | BLOCKED to Root with missing evidence, no writes. |
+| Reconstructed plan lacks consent | AUTHORIZATION_REQUIRED to Root without privilege expansion. |
+| Denied skill access or version mismatch | Do not reconstruct or bypass; report verified blocker. |
 | Optional YAML asset unavailable, required strategy loaded | Existing independently verified synthesis remains a last resort. |
 | No dispatch endpoint, verified push trigger and observation route present | Use authorized publication; observe actual jobs before reporting a pass. |

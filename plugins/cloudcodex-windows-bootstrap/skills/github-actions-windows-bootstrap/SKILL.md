@@ -191,12 +191,14 @@ a branch, workflow run, fork, or write merely because the caller/control-plane v
 lags. Provider refs, marker commits and Actions runs are authoritative for remote
 side effects.
 
-**Missing skill/tool:** a filtered or empty inventory alone is not proof of
-unavailability. First use the bounded, verified-locator lookup defined in the
-execution contract, where the host exposes a supported reader. Record the actual
-method, result and missing layer before reporting BLOCKED. Never silently install
-another plugin, invent a provider operation, or treat a missing sibling file as
-permission to reimplement a different strategy.
+**Missing skill/tool:** an empty or filtered inventory is not proof of absence.
+After normal loading, try a bounded trusted same-release locator via supported
+readers. If still unavailable without denial or version mismatch, apply the
+contract's guarded *same-strategy reconstruction* from fully verified authoritative
+invariants. Never invent a different strategy or silently install a plugin.
+If a mandatory invariant is unknown, return BLOCKED with a structured handoff
+to the Root; missing consent returns AUTHORIZATION_REQUIRED. No remote write
+or bypass of host/provider denials is permitted.
 
 ## 6. Finish honestly
 

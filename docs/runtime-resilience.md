@@ -15,13 +15,14 @@ document separates responsibilities and defines safe recovery.
 - **Ambiguous write/approval outcome:** a write tool may report approval/failure while
   refs, commits and Actions continue asynchronously. Never equate that first response
   with a guaranteed no-op.
-- **Resource loading:** the former `.template` assets were not readable through the
-  tested loader. Version 0.6.4 uses external `assets/windows-workflow.yml`; the
-  version 0.6.2 embedded fallback is historical and has been removed.
-- **Discovery completeness:** a later 0.6.4 gate omitted strategy names from a
-  filtered inventory while direct skill-locator reads succeeded. An empty list
-  therefore did not establish unavailability in that run. It does not prove a
-  causal connection to the former extension filter or to any Cloud generation.
+- **Resource loading:** auxiliary assets may be unreadable on some hosts;
+  prefer registered YAML resources and preserve guarded, independently verified
+  workflow synthesis only when strategy invariants are known.
+- **Discovery completeness:** a filtered skill inventory can omit loadable
+  strategies. After name dispatch and bounded trusted-locator reads, a strategy
+  may be reconstructed only for the same run from independently verified
+  authoritative requirements. Otherwise return BLOCKED to the Root.
+  Inventory omissions and resource-read failures are separate classes.
 - **Decision continuity:** confirmed same-scope choices should survive a resume;
   technical permissions, remembered defaults and previous success are not grants.
 - **Agent path drift:** no `managed-state.md` resource exists. Managed state is the
@@ -57,13 +58,14 @@ same still-valid consent. Run-scoped authorization cannot silently become projec
 scoped authorization. Never persist secrets. A temporary file is not durable storage.
 
 Try the installed strategy normally, then a bounded read of a known, same-release
-locator through a supported host interface. Check identity/version before use;
-stop on denial. Listing, resource reading and provider operations are distinct.
+locator through a supported host interface. If still unavailable without denial,
+reconstruct only a fully verified run-local plan for the same strategy; otherwise
+return BLOCKED or AUTHORIZATION_REQUIRED to the Root. Listing, resource reading
+and provider operations are distinct.
 The entry skill and shared contracts define the plugin-specific path; general
 Root/Child policies belong in their existing orchestration instruction sources.
 
-The stale-task issue was not reproduced in the completed gate; it is not proven
-fixed. This change does not repair event delivery, authority indexing or runtime
-caches. Legacy/current Cloud comparisons and live autonomous behavior under these
-new instructions remain unverified. Offline contract tests check the published
-instructions and packaging, not execution by a live agent.
+Control-plane state freshness cannot be established from task completion alone.
+Compare simultaneous task, provider and UI observations before claiming a fix.
+Instruction changes do not repair event delivery, authority indexing or runtime
+caches. Offline tests verify contracts and packaging, not autonomous host behavior.

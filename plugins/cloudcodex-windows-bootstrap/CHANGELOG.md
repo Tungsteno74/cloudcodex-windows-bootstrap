@@ -9,6 +9,13 @@
 - Distinguish push-triggered Actions scheduling from optional dispatch APIs.
 - Keep stale-task reporting and Legacy Cloud hypotheses separate from these fixes.
 
+## 0.6.4 — 2026-10-08
+
+- Move the canonical workflow into `assets/windows-workflow.yml` within each
+  strategy, replacing unreadable `.yml.template` resources.
+- Remove duplicated embedded YAML, retaining independently verified synthesis
+  as the exceptional last resort.
+
 ## 0.6.2 — 2026-10-08
 
 - Embed a verified copy of the Windows workflow template in each strategy SKILL.md so Cloud agents can materialize it without auxiliary resource mounts. Synchronize and test the inline/sidecar copies at build time.
