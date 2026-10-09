@@ -28,6 +28,12 @@ class GitHubBindingTests(unittest.TestCase):
         self.assertIn('push: true', self.access)
         self.assertIn('not proof of Workflows write scope', self.access)
 
+    def test_narrow_read_discovery_fallback(self) -> None:
+        self.assertIn("PR-only workflow runs", self.access)
+        self.assertIn("approved generic REST GET fetches", self.access)
+        self.assertIn("A narrow tool result is not", self.access)
+        self.assertIn("Do not invent endpoints", self.access)
+
     def test_no_auth_workaround(self) -> None:
         for phrase in ('ALREADY configured and authorized', 'does not bypass a denial',
                        'connector credentials', 'new login flows', 'enlarge scopes'):

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.6.6 ? 2026-10-09
+
+- Strengthen bounded, read-only connector discovery when specialized GitHub
+  endpoints omit required run types; preserve authorization and denial guards.
+
 ## 0.6.5 — 2026-10-09
 
 - Reuse verified decision/authorization context within its still-valid scope;
