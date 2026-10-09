@@ -39,6 +39,13 @@ supported request.
 Discover only capabilities needed by the selected strategy. Tool existence and
 provider permission are separate.
 
+When a specialized GitHub read tool covers only part of the required collection
+(for example PR-only workflow runs), inspect other exposed read-only connector
+routes, including approved generic REST GET fetches. A narrow tool result is not
+proof that the underlying capability is absent. Before terminal BLOCKED, check
+eligible strategy fallbacks and report the exact missing route or verified denial.
+Do not invent endpoints, bypass provider/host restrictions or broaden access.
+
 - Source/ref/tree read: get_repo/file/commit/tree reads or approved **GET-only** fetch.
 - CI objects: `create_tree` + `create_commit` from pinned source tree/parent.
 - Branch publication: `create_branch` only after the complete CI SHA exists.

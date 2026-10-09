@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.6.6 ? 2026-10-09
+
+- Improve read-only GitHub route discovery when a specialized connector function
+  exposes a narrower result set than the strategy requires.
+
 ## 0.6.5 — 2026-10-09
 
 - Reuse verified decision/authorization context within its still-valid scope;
