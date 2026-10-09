@@ -50,7 +50,7 @@ document separates responsibilities and defines safe recovery.
 - **Platform/control plane:** ultimately owns consistent task events, approval state,
   environment binding and resource mounting.
 
-## Targeted continuity and discovery hardening — unreleased
+## Decision continuity and guarded strategy recovery
 
 Use the existing journal/handoff to carry decisions, their authority and validity;
 revalidate changed conditions without resetting every decision or asking for the

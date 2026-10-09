@@ -36,7 +36,7 @@ skill-list omission followed by successful direct reads. This establishes an
 observed discovery discrepancy, not a platform fix or an extension-filter cause.
 State freshness was not measured against simultaneous UI observations.
 
-The unreleased change adds offline contract regressions for decision provenance,
+Release 0.6.5 adds offline contract regressions for decision provenance,
 scope/expiry/revocation, volatile handoff reporting and bounded locator discovery.
 These are instruction/package checks, not new live Gate 1/2/3 executions.
 

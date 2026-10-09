@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.6.5 — 2026-10-09
+
 - Reuse verified decision/authorization context within its still-valid scope;
   record provenance, revocation and actual journal durability without storing secrets.
 - Recover installed skills omitted from filtered lists through bounded, verified

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "cloudcodex-windows-bootstrap",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "Windows validation for Codex Cloud using strict ephemeral CI first, managed/fork escalation, and an explicit retained-branch fallback with context-aware CONFIRM/AUTO routing.",
   "author": {
     "name": "Tungsteno74"
