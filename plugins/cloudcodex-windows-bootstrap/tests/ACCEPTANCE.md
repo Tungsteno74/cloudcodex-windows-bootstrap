@@ -31,3 +31,20 @@ Primary live gates:
 1. Directly open a task and issue a neutral prompt: expect CONFIRM unless the host explicitly marks it delegated.
 2. Have Chat/another agent create a single-shot Codex task without specifying a mode: when delegation is positively exposed to the child, expect `AUTO` / `delegated_default` and no AWAITING_CONFIRMATION solely for the internal fallback choice.
 3. Repeat with explicit CONFIRM and verify that explicit user choice overrides delegated default.
+
+## Targeted continuity/discovery acceptance scenarios (live execution pending)
+
+| Scenario | Expected behavior |
+|---|---|
+| Same run, explicit grant valid, new turn | Reuse the decision after revalidation; no duplicate consent prompt. |
+| New run, previous grant was run-only | Do not transfer authorization; return the missing authorization. |
+| Broader explicit grant covers next run | Reuse only with parent-carried provenance and matching scope. |
+| Revocation, expiry or narrowed instructions | Invalidate affected decisions; no unauthorized write. |
+| Multiple technical accounts, one selected valid grant | Preserve that identity; do not infer new consent from permissions. |
+| Journal only in temporary storage | Report volatile; return minimum verified context for handoff. |
+| Strategy omitted from filtered listing, known same-release locator readable | Load through supported reader and verify identity/version before proceeding. |
+| Direct reader reports a denial | Stop; do not search for a permission bypass. |
+| Locator resolves stale or different instructions | At most one supported refresh; never silently substitute versions. |
+| Package-editor read succeeds but installed strategy is unavailable | Diagnostic evidence only; do not replace the installed strategy. |
+| Optional YAML asset unavailable, required strategy loaded | Existing independently verified synthesis remains a last resort. |
+| No dispatch endpoint, verified push trigger and observation route present | Use authorized publication; observe actual jobs before reporting a pass. |

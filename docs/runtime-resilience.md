@@ -15,10 +15,15 @@ document separates responsibilities and defines safe recovery.
 - **Ambiguous write/approval outcome:** a write tool may report approval/failure while
   refs, commits and Actions continue asynchronously. Never equate that first response
   with a guaranteed no-op.
-- **Resource mounting:** auxiliary templates can be unavailable on some Cloud hosts.
-  Every strategy now embeds the canonical YAML directly in its SKILL.md; this
-  deterministic fallback precedes guarded synthesis and does not repair the
-  platform's resource mount itself.
+- **Resource loading:** the former `.template` assets were not readable through the
+  tested loader. Version 0.6.4 uses external `assets/windows-workflow.yml`; the
+  version 0.6.2 embedded fallback is historical and has been removed.
+- **Discovery completeness:** a later 0.6.4 gate omitted strategy names from a
+  filtered inventory while direct skill-locator reads succeeded. An empty list
+  therefore did not establish unavailability in that run. It does not prove a
+  causal connection to the former extension filter or to any Cloud generation.
+- **Decision continuity:** confirmed same-scope choices should survive a resume;
+  technical permissions, remembered defaults and previous success are not grants.
 - **Agent path drift:** no `managed-state.md` resource exists. Managed state is the
   provider ref/marker history plus the run journal.
 
@@ -43,3 +48,22 @@ document separates responsibilities and defines safe recovery.
   with persistent provider state, and resume the same run.
 - **Platform/control plane:** ultimately owns consistent task events, approval state,
   environment binding and resource mounting.
+
+## Targeted continuity and discovery hardening — unreleased
+
+Use the existing journal/handoff to carry decisions, their authority and validity;
+revalidate changed conditions without resetting every decision or asking for the
+same still-valid consent. Run-scoped authorization cannot silently become project-
+scoped authorization. Never persist secrets. A temporary file is not durable storage.
+
+Try the installed strategy normally, then a bounded read of a known, same-release
+locator through a supported host interface. Check identity/version before use;
+stop on denial. Listing, resource reading and provider operations are distinct.
+The entry skill and shared contracts define the plugin-specific path; general
+Root/Child policies belong in their existing orchestration instruction sources.
+
+The stale-task issue was not reproduced in the completed gate; it is not proven
+fixed. This change does not repair event delivery, authority indexing or runtime
+caches. Legacy/current Cloud comparisons and live autonomous behavior under these
+new instructions remain unverified. Offline contract tests check the published
+instructions and packaging, not execution by a live agent.

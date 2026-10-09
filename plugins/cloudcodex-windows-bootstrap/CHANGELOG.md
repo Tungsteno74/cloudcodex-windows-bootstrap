@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Reuse verified decision/authorization context within its still-valid scope;
+  record provenance, revocation and actual journal durability without storing secrets.
+- Recover installed skills omitted from filtered lists through bounded, verified
+  locator reads; preserve version, authority, router and provider permission guards.
+- Distinguish push-triggered Actions scheduling from optional dispatch APIs.
+- Keep stale-task reporting and Legacy Cloud hypotheses separate from these fixes.
+
 ## 0.6.2 — 2026-10-08
 
 - Embed a verified copy of the Windows workflow template in each strategy SKILL.md so Cloud agents can materialize it without auxiliary resource mounts. Synchronize and test the inline/sidecar copies at build time.

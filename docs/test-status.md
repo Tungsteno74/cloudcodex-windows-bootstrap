@@ -6,8 +6,8 @@
 - Managed branch validation and restoration.
 - Retained branch validation and source reset.
 - Workflow synthesis and matching-CI reuse.
-- Offline regression: embedded canonical template renders when auxiliary files
-  are inaccessible; a fresh Cloud runtime check is still required.
+- External YAML asset integrity and verified-synthesis fallback contracts in 0.6.4.
+  The earlier embedded-template test belonged to 0.6.2 and has been superseded.
 - Cross-platform package validation and reproducible release artifacts.
 - Marketplace, manifest, permissions, and release-gate checks.
 
@@ -27,6 +27,18 @@ missing, packaged templates can be unavailable, Codex Tasks can lag the UI, and 
 write/approval result can initially contradict provider-side execution. Version
 0.6.1 adds reconciliation and structured handoff guidance; platform consistency
 remains outside the plugin's direct control.
+
+## Continuity and discovery follow-up — 2026-10-09
+
+The 0.6.4 authorization gate completed Windows CI and cleanup after explicit
+approval and one corrective parent follow-up. The terminal log exposed a filtered
+skill-list omission followed by successful direct reads. This establishes an
+observed discovery discrepancy, not a platform fix or an extension-filter cause.
+State freshness was not measured against simultaneous UI observations.
+
+The unreleased change adds offline contract regressions for decision provenance,
+scope/expiry/revocation, volatile handoff reporting and bounded locator discovery.
+These are instruction/package checks, not new live Gate 1/2/3 executions.
 
 ## Remaining end-to-end coverage
 
