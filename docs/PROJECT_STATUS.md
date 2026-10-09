@@ -1,9 +1,10 @@
 # Project status
 
-Released state: **0.6.4 pre-1.0**.
+Released state: **0.6.5 pre-1.0**.
 
-Unreleased: scoped decision continuity and bounded installed-skill discovery;
-offline contract regressions added, live recovery behavior still to be verified.
+Version 0.6.5 hardens decision continuity, installed-skill discovery and
+guarded same-strategy reconstruction; live behavior in fresh Cloud environments
+remains to be verified.
 
 ## Done
 
