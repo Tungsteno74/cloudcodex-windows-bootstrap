@@ -1,6 +1,9 @@
 # Project status
 
-Current state: **0.6.2 pre-1.0**.
+Released state: **0.6.4 pre-1.0**.
+
+Unreleased: scoped decision continuity and bounded installed-skill discovery;
+offline contract regressions added, live recovery behavior still to be verified.
 
 ## Done
 

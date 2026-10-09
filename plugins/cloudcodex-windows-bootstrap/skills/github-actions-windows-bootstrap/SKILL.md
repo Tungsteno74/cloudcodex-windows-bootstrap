@@ -16,7 +16,10 @@ description: >-
 This skill owns routing, run context and escalation policy. Strategy skills may be
 selected implicitly by Codex, but their own guards must reject writes without a
 valid bootstrap context. Do not resolve sibling SKILL.md files manually; invoke the
-installed strategy by skill name.
+installed strategy by skill name. This prohibits guessed sibling filesystem paths,
+not an installed strategy's verified resource locator. A skill is instruction
+content, not necessarily a callable tool with the same name. Before declaring a
+strategy unavailable, apply Installed skill discovery in the execution contract.
 
 ## 1. Select and disclose the escalation mode
 
@@ -82,6 +85,13 @@ Establish a strategy run context containing at least:
 - observed GitHub account/channel/capabilities and authorization status;
 - no-write/write state for this run, with explicit policy prohibitions separated
   from the mere absence of prior authorization.
+
+Before repeating account, authorization or strategy decisions, recover the existing
+journal/handoff and apply Decision continuity in the execution contract. Retain
+verified decisions whose scope and validity still cover the operation; ask again
+only for missing, invalidated or out-of-scope consent. Current restrictions and
+provider approvals still apply. Persist the decision delta in the existing record,
+not in global preferences or credentials. Default mode recomputation is unchanged.
 
 Creating refs/workflows/forks and running Actions are external changes. A plugin
 installation or deferred record is not authorization. Under CONFIRM, ask before the
@@ -181,9 +191,14 @@ a branch, workflow run, fork, or write merely because the caller/control-plane v
 lags. Provider refs, marker commits and Actions runs are authoritative for remote
 side effects.
 
-**Missing skill/tool:** name it exactly. Never silently install another plugin,
-invent a provider operation, or treat a missing sibling file as permission to
-reimplement a different strategy.
+**Missing skill/tool:** an empty or filtered inventory is not proof of absence.
+After normal loading, try a bounded trusted same-release locator via supported
+readers. If still unavailable without denial or version mismatch, apply the
+contract's guarded *same-strategy reconstruction* from fully verified authoritative
+invariants. Never invent a different strategy or silently install a plugin.
+If a mandatory invariant is unknown, return BLOCKED with a structured handoff
+to the Root; missing consent returns AUTHORIZATION_REQUIRED. No remote write
+or bypass of host/provider denials is permitted.
 
 ## 6. Finish honestly
 
@@ -231,7 +246,9 @@ configuration authority, to preserve this continuation in `start_skill`:
 > is not a prohibition on later writes; normal authorization rules apply.
 
 Do not create the task or promise an automatic hook. Report whether persistence was
-actually confirmed by the caller. The parent should also include the compact
+actually confirmed by the caller. Carry the verified decision context and its
+authorization provenance in that continuation; a temporary journal alone does not
+prove cross-environment persistence. The parent should also include the compact
 continuation in the first delegated task turn; `start_skill` is an optimization,
 not the only authoritative copy of the handoff.
 

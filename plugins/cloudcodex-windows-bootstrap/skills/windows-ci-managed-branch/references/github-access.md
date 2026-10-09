@@ -16,6 +16,13 @@ select by nickname/list order or infer repository owner equals acting account.
 Ask if multiple identities could perform a write and intent is ambiguous. Never
 print selectors, tokens, credential files or auth headers.
 
+Before treating selection as ambiguous, apply Decision continuity in the execution
+contract. Reuse the recorded authorized identity when provenance, scope and current
+permissions remain valid; the presence of other accounts is not by itself a reason
+to ask again. Re-resolve host-local selectors from current metadata, never from a
+secret or stale selector saved in the journal. A newly required identity or an
+out-of-scope operation still needs authorization.
+
 ## 2. Two narrow read checks, no permission-test writes
 
 Prefer native GitHub connector operations to terminal HTTP or `gh api`.
@@ -36,6 +43,10 @@ provider permission are separate.
 - CI objects: `create_tree` + `create_commit` from pinned source tree/parent.
 - Branch publication: `create_branch` only after the complete CI SHA exists.
 - Actions observation: run collection filtered by branch/SHA, then jobs/logs.
+- Actions scheduling: an eligible verified `on.push` workflow is triggered by its
+  authorized ref publication; a separate workflow-dispatch tool is not required.
+  Verify trigger eligibility and an observation route before publishing. Missing
+  observation capability remains a blocker, and a successful ref write is not a pass.
 - Strict cleanup: actual ref deletion or independently authorized existing Git transport;
   `delete_file` is not branch deletion.
 - Managed movement: `update_ref` with exact `expected_sha` and forced lease semantics;

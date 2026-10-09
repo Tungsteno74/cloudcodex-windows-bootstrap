@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Reuse verified decision/authorization context within its still-valid scope;
+  record provenance, revocation and actual journal durability without storing secrets.
+- Recover installed skills omitted from filtered lists through bounded, verified
+  locator reads; preserve version, authority, router and provider permission guards.
+- Distinguish push-triggered Actions scheduling from optional dispatch APIs.
+- Keep stale-task reporting and Legacy Cloud hypotheses separate from these fixes.
+- Recover the same strategy locally only from independently verified safeguards,
+  otherwise return an explicit BLOCKED/authorization handoff to the Root.
+
 ## 0.6.4 ? 2026-10-08
 
 - Move the canonical workflow template to `assets/windows-workflow.yml`
