@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.6.7 - 2026-10-13
+
+- Add an optional, evidence-only Root-facing CloudRepo Environment Direct
+  recommendation for narrowly verified terminal readiness blocks.
+- Preserve Bootstrap strategy order, consent, cleanup and reconciliation guards;
+  pending, failed, denied, ambiguous and unclassified conditions cannot suggest it.
+
 ## 0.6.6 ? 2026-10-09
 
 - Improve read-only GitHub route discovery when a specialized connector function

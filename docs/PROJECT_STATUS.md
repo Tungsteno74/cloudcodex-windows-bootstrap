@@ -1,10 +1,10 @@
 # Project status
 
-Released state: **0.6.5 pre-1.0**.
+Released state: **0.6.7 pre-1.0**.
 
-Version 0.6.5 hardens decision continuity, installed-skill discovery and
-guarded same-strategy reconstruction; live behavior in fresh Cloud environments
-remains to be verified.
+Version 0.6.7 adds an optional evidence-only Root-facing Direct recommendation
+for narrowly verified terminal readiness blocks; live behavior in fresh Cloud
+environments remains to be verified.
 
 ## Done
 
