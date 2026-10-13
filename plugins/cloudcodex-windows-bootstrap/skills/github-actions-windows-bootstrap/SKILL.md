@@ -7,8 +7,9 @@ description: >-
   strict ephemeral, managed, fork or retained strategies. Explicit user mode wins;
   delegated/unattended execution prefers AUTO, interactive or unknown execution
   defaults to CONFIRM. Ambiguous write outcomes are reconciled against provider
-  state before retry or terminal reporting. Strategy skills require this bootstrap
-  run context.
+  state before retry or terminal reporting. Eligible terminal BLOCKED results may
+  carry an optional Root-facing CloudRepo Environment Direct recommendation, never
+  an invocation. Strategy skills require this bootstrap run context.
 ---
 
 # Windows CI bootstrap — entry skill
@@ -201,6 +202,43 @@ to the Root; missing consent returns AUTHORIZATION_REQUIRED. No remote write
 or bypass of host/provider denials is permitted.
 
 ## 6. Finish honestly
+
+### Optional Root-facing CloudRepo Environment Direct recommendation
+
+This is a terminal reporting aid, not a Bootstrap strategy, fallback route, skill
+invocation, authorization grant, or instruction to create a Cloud/CI resource.
+Preserve the strict -> managed -> fork -> retained precedence exactly as above.
+Only Root Chat may separately select and authorize an independent Direct CI plan.
+
+An otherwise terminal `BLOCKED` result may include the optional recommendation only
+after bounded supported checks and authoritative provider-state reconciliation show
+one of these narrow cases:
+
+- a required installed plugin, host skill, or API capability genuinely remains
+  absent, without a denial or version/identity mismatch, after the contract's
+  supported discovery/reader checks; or
+- the Cloud task failed to start and Root verified that no run-owned CI ref or job
+  ever started.
+
+Do not attach it for `PENDING` or active work, `FAILED_CHECKS`, an ambiguous write
+effect or inconclusive reconciliation, 401/403 or other authorization denial,
+explicit policy denial, rate limiting, an unclassified outage, or elapsed time.
+It must never bypass a denied Cloud GitHub scope. Root may consider independently
+authorized GitHub CI only after provider state is authoritative and reconciled.
+
+When eligible, emit only observed evidence in the shared result fields:
+
+```text
+recommended_fallback: cloudrepo-environment-direct
+fallback_skill: cloudrepo-environment-direct
+fallback_eligibility: candidate_requires_root_preflight
+fallback_evidence: <observed source_repository/full source_revision/required native Windows checks/run_id/task IDs and provider ref/workflow absence or unknown>
+```
+
+Use `fallback_eligibility: proof_complete` only when the supplied observed evidence
+actually completes that proof; otherwise retain `candidate_requires_root_preflight`.
+Do not invent task IDs, provider labels, authorizations, absent refs, or workflow
+results. When the recommendation is ineligible, omit it or use `none` fields.
 
 Always emit the shared result contract, including early BLOCKED,
 AWAITING_CONFIRMATION, AUTHORIZATION_REQUIRED and DEFERRED_TO_TASK exits. A

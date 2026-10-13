@@ -300,7 +300,7 @@ authorization; if authorization is missing or ambiguous return
 WINDOWS_CI_BOOTSTRAP: <REUSED|COMPLETED|FAILED_CHECKS|PENDING|AWAITING_CONFIRMATION|AUTHORIZATION_REQUIRED|DEFERRED_TO_TASK|BLOCKED|DECLINED|NOT_APPLICABLE>
 run_id: <id>
 plugin: cloudcodex-windows-bootstrap
-plugin_version: 0.6.6
+plugin_version: 0.6.7
 phase: <onboarding|task|unknown>
 INTERACTION_CONTEXT: <delegated|interactive|unknown>
 ESCALATION_MODE: <CONFIRM|AUTO>
@@ -338,6 +338,10 @@ covered_checks: <checks actually run>
 residual_windows_checks: <unverified checks>
 reconciliation_status: <not_needed|confirmed_absent|confirmed_present|in_progress|terminal|inconclusive>
 reconciliation_evidence: <exact refs/run IDs/commit SHAs or none>
+recommended_fallback: <cloudrepo-environment-direct or none; only eligible terminal BLOCKED>
+fallback_skill: <cloudrepo-environment-direct or none; recommendation only, never invoked here>
+fallback_eligibility: <candidate_requires_root_preflight|proof_complete|not_eligible>
+fallback_evidence: <only observed source repository/full SHA/required native Windows checks/run_id/task IDs and provider ref/workflow absence or unknown; or none>
 temporary_resources: <run-owned refs/fork IDs actually created>
 persistent_resources: <managed/retained refs intentionally remaining, or none>
 cleanup: <complete|required|pending|not_needed>

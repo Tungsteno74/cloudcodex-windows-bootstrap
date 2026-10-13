@@ -49,8 +49,8 @@ class PackageTests(unittest.TestCase):
 
     def test_version_and_identity(self) -> None:
         self.assertEqual(self.manifest['name'], 'cloudcodex-windows-bootstrap')
-        self.assertEqual(self.manifest['version'], '0.6.6')
-        self.assertEqual(self.overlay['version'], '0.6.6')
+        self.assertEqual(self.manifest['version'], '0.6.7')
+        self.assertEqual(self.overlay['version'], '0.6.7')
         self.assertEqual(self.overlay['name'], self.manifest['name'])
         self.assertEqual(self.overlay['interface'], self.manifest['extensions']['com.openai']['interface'])
 
@@ -224,6 +224,32 @@ class PackageTests(unittest.TestCase):
             self.assertNotIn('open a pull request', text.lower(), name)
             self.assertIn('default branch', text.lower(), name)
         self.assertIn('never merges or writes', (ROOT / 'README.md').read_text())
+
+    def test_direct_fallback_is_optional_root_handoff_not_invocation(self) -> None:
+        for phrase in (
+            'recommended_fallback: cloudrepo-environment-direct',
+            'fallback_skill: cloudrepo-environment-direct',
+            'candidate_requires_root_preflight',
+            'Only Root Chat may separately select and authorize',
+            'not a Bootstrap strategy',
+        ):
+            self.assertIn(phrase, self.entry)
+        self.assertNotIn('$cloudrepo-environment-direct', self.entry)
+        self.assertNotIn('$cloudrepo-environment-direct', self.contract)
+
+    def test_direct_fallback_excludes_unsafe_terminal_states(self) -> None:
+        for phrase in (
+            '`PENDING` or active work',
+            '`FAILED_CHECKS`',
+            'ambiguous write\neffect or inconclusive reconciliation',
+            '401/403 or other authorization denial',
+            'explicit policy denial',
+            'rate limiting',
+            'unclassified outage',
+            'elapsed time',
+            'must never bypass a denied Cloud GitHub scope',
+        ):
+            self.assertIn(phrase, self.entry)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-# CloudCodeX Windows Bootstrap - 0.6.5
+# CloudCodeX Windows Bootstrap - 0.6.7
 
 Multi-skill Windows validation for Codex Cloud through GitHub Actions. The plugin
 requires the configured GitHub app and ships no credentials, MCP server, or Windows
@@ -68,6 +68,19 @@ Generic setup-refresh warnings are diagnostic only: the agent verifies concrete
 skills/resources and continues when they are readable. The managed strategy uses
 provider refs plus marker commits and never depends on an invented
 `managed-state.md` file.
+
+## Optional Root-facing Direct recommendation
+
+If bounded supported checks and provider reconciliation establish a genuine
+terminal readiness block, the router may return an optional
+`cloudrepo-environment-direct` recommendation. It is evidence for Root Chat, not
+a Bootstrap strategy, invocation, authorization grant, or automatic CI action.
+Root alone may select and authorize Direct CI after its independent preflight.
+
+The recommendation is excluded for pending/active runs, failed checks, uncertain
+writes, authorization or policy denials, rate limits, unclassified outages, and
+mere elapsed time. Its structured evidence contains only observed repository/SHA,
+native checks, run/task identifiers, and reconciled provider ref/workflow state.
 
 ## Package resources
 
