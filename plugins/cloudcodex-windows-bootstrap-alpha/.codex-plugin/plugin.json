@@ -1,0 +1,27 @@
+{
+  "interface": {
+    "displayName": "CloudCodeX Windows Bootstrap Alpha",
+    "shortDescription": "Alpha Windows Bootstrap",
+    "longDescription": "An independently installable alpha package. It retains isolated Windows CI strategy bundles and adds a Current Cloud onboarding skill that may update only an empty install_script draft when the host exposes the supported draft API. It never changes startup or start_skill, publishes, approves, runs CI, or overwrites an existing install script.",
+    "developerName": "Tungsteno74",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Independent alpha Windows CI validation",
+      "Current Cloud install-script draft preparation",
+      "Provider-state reconciliation",
+      "Self-contained strategy skills"
+    ],
+    "defaultPrompt": "Use $current-cloud-windows-bootstrap-alpha-onboarding only when a Cloud Current alpha install-script draft was explicitly requested. Otherwise use $github-actions-windows-bootstrap-alpha for the independent alpha Windows validation path. Do not invoke stable skills, publish, approve, run CI, or change startup/start_skill.",
+    "logo": "./assets/icon.png",
+    "composerIcon": "./assets/icon.png"
+  },
+  "apps": "./.app.json",
+  "name": "cloudcodex-windows-bootstrap-alpha",
+  "version": "0.7.0-alpha.1",
+  "description": "Independent alpha Windows Bootstrap package for Cloud Current onboarding and scoped Windows CI validation.",
+  "author": {
+    "name": "Tungsteno74"
+  },
+  "keywords": ["alpha", "current-cloud", "windows"] ,
+  "skills": "./skills"
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: Current Cloud Windows Bootstrap Alpha Onboarding
+  short_description: Guarded alpha install-script draft preparation
+  default_prompt: Use $current-cloud-windows-bootstrap-alpha-onboarding only for an explicitly requested Cloud Current alpha onboarding draft. Update only an empty install_script when the supported host draft API is actually exposed; otherwise return ALPHA_INSTALL_DRAFT_BLOCKED with the bundled script artifact.
+policy:
+  allow_implicit_invocation: false
+  products:
+  - CODEX

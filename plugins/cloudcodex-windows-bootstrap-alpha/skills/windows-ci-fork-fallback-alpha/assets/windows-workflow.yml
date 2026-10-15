@@ -1,0 +1,37 @@
+# TEMPLATE ONLY: substitute trusted literals and validate before committing.
+name: Codex Windows CI __RUN_ID__
+run-name: Windows checks __SOURCE_SHORT_SHA__ (__RUN_ID__)
+"on":
+  push:
+    branches:
+      - '__TEMP_BRANCH__'
+permissions:
+  contents: read
+jobs:
+  windows-validation:
+    runs-on: windows-latest
+    timeout-minutes: __TIMEOUT_MINUTES__
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout the exact source revision
+        uses: actions/checkout@__CHECKOUT_ACTION_SHA__
+        with:
+          ref: '__SOURCE_SHA__'
+          persist-credentials: false
+      - name: Verify source identity
+        env:
+          EXPECTED_SOURCE_SHA: '__SOURCE_SHA__'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $observed = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($observed.Trim() -ne $env:EXPECTED_SOURCE_SHA) {
+            throw 'Unexpected source revision; refusing to validate a different commit.'
+          }
+      # Insert only the language/tool setup required by the project, with verified pins.
+      - name: Run the selected native Windows checks
+        run: |
+          $ErrorActionPreference = 'Stop'
+          __WINDOWS_CHECK_COMMANDS__
