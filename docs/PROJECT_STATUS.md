@@ -8,6 +8,15 @@ Version 0.6.7 adds an optional evidence-only Root-facing Direct recommendation
 for narrowly verified terminal readiness blocks; live behavior in fresh Cloud
 environments remains to be verified.
 
+## Accepted managed E2E ? 2026-10-19
+
+Cloud Current task and one GitHub-hosted Windows run completed successfully
+(historical run ID 39271694821), with WINDOWS_CLOUD_E2E_OK observed,
+a verified managed baseline restoration and an unchanged default branch.
+The disposable GitHub fixture was subsequently deleted, so its run URL is
+no longer a live reference. Remaining TODO items are optional pre-1.0
+hardening, not blockers for acceptance of version 0.6.8.
+
 ## Done
 
 - Independent public repository for the CloudCodeX Windows Bootstrap plugin.

@@ -40,6 +40,14 @@ Release 0.6.5 adds offline contract regressions for decision provenance,
 scope/expiry/revocation, volatile handoff reporting and bounded locator discovery.
 These are instruction/package checks, not new live Gate 1/2/3 executions.
 
+## Final accepted managed run ? 2026-10-19
+
+One managed-branch Windows job finished successfully in historical run
+39271694821; the log contained WINDOWS_CLOUD_E2E_OK, the managed ref
+was returned to a baseline whose tree matched the source, and main was
+unchanged. The disposable fixture hosting the run has since been deleted.
+This result validates the managed route, not every optional strategy below.
+
 ## Remaining end-to-end coverage
 
 - Strict branch deletion and fork fallback.
