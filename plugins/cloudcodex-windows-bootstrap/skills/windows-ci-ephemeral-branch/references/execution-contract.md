@@ -48,6 +48,36 @@ scope do not require a second pause solely to choose a fallback. New credentials
 broader scopes, provider approvals, ambiguous destinations, policy changes and
 out-of-scope destructive actions remain authorization boundaries.
 
+### Authorization-gap classification before fallback termination
+
+Technical viability, a permission gap and an explicit prohibition are different
+states. Evaluate all three after REF_DELETE_UNAVAILABLE and before BLOCKED.
+
+1. Authorized eligible fallback: delegated AUTO continues in declared strategy
+   order without a redundant confirmation, preserving provider approvals.
+2. Missing or ambiguous grant: when a technically plausible fallback needs
+   branch retention or another ungranted effect, return AUTHORIZATION_REQUIRED
+   with handoff_status: returned_to_caller. The phrase "temporary CI branch with
+   safe cleanup" is insufficient consent for codex/windows-ci-managed retention,
+   but is not itself an explicit prohibition. Do not write before Root approval.
+3. Explicit prohibition: a verified current user/host/repository ban excludes
+   the prohibited fallback. Continue only with independently permitted routes;
+   with no viable permitted alternative, return BLOCKED with policy evidence.
+4. Capability or denial: genuine required-tool absence, provider denial, or
+   unverified mandatory safeguard means BLOCKED with the exact observed reason,
+   not a false authorization gap; never bypass a denial.
+5. CONFIRM-only choice: use AWAITING_CONFIRMATION to select among already
+   authorized strategies. Missing permission for the proposed action itself
+   remains AUTHORIZATION_REQUIRED.
+
+An AUTHORIZATION_REQUIRED handoff must preserve the same run_id, source
+repository/full SHA, current Git/ref/run evidence, proposed strategy and
+persistent branch disposition, exact single-run Windows checks, the new
+authorization_needed and authorization_proposal, grant provenance and
+handoff_status: returned_to_caller. Preserve the no-write state, record the
+decision delta in the existing journal and let Root resume the same task with
+verifiable consent. Revalidate on resumption; do not create a duplicate run.
+
 ### Decision continuity
 
 Use the existing run journal and caller-returned handoff as the decision record;
@@ -300,7 +330,7 @@ authorization; if authorization is missing or ambiguous return
 WINDOWS_CI_BOOTSTRAP: <REUSED|COMPLETED|FAILED_CHECKS|PENDING|AWAITING_CONFIRMATION|AUTHORIZATION_REQUIRED|DEFERRED_TO_TASK|BLOCKED|DECLINED|NOT_APPLICABLE>
 run_id: <id>
 plugin: cloudcodex-windows-bootstrap
-plugin_version: 0.6.7
+plugin_version: 0.6.8
 phase: <onboarding|task|unknown>
 INTERACTION_CONTEXT: <delegated|interactive|unknown>
 ESCALATION_MODE: <CONFIRM|AUTO>
@@ -315,6 +345,9 @@ decision_context_locator: <actual journal or caller-returned record reference; o
 decision_context_durability: <volatile|durable|result_only|unavailable>
 authorization_origin: <verifiable current user/parent grant reference; or none>
 authorization_scope: <covered identities, destinations, operations, conditions and validity; or none>
+authorization_needed: <precise missing or ambiguous user/provider decision; or none>
+authorization_proposal: <repository/SHA, ref, retention, checks, run count, cleanup; or none>
+explicit_prohibition_evidence: <verified user/host/repository rule or none>
 github_channel: <connector|existing_git|existing_cli|mixed|none>
 github_account: <verified login or not_observed; never token/link_id>
 github_access_status: <read_verified|capability_missing|authorization_required|denied|unclassified|not_observed>

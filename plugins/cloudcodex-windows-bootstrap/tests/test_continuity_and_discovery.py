@@ -138,6 +138,42 @@ class ContinuityAndDiscoveryTests(unittest.TestCase):
         ):
             self.assertIn(phrase, self.contract)
 
+    def test_temporary_branch_scope_returns_authorization_required(self) -> None:
+        for phrase in (
+            'temporary CI branch with safe cleanup',
+            'not by itself an explicit prohibition',
+            'AUTHORIZATION_REQUIRED',
+            'handoff_status: returned_to_caller',
+        ):
+            self.assertIn(phrase, self.router + self.contract)
+
+    def test_explicit_prohibition_is_not_a_consent_gap(self) -> None:
+        for phrase in (
+            'Explicit prohibition',
+            'return BLOCKED with the policy',
+            'no viable permitted alternative',
+        ):
+            self.assertIn(phrase, self.router + self.contract)
+
+    def test_missing_provider_capability_remains_blocked(self) -> None:
+        self.assertIn('Technical/provider blocker:', self.router)
+        self.assertIn('A missing grant is not a technical blocker', self.router)
+        self.assertIn('not a false authorization gap', self.contract)
+
+    def test_auto_vs_confirm_does_not_expand_authorization(self) -> None:
+        self.assertIn('follow the AUTO', self.router)
+        self.assertIn('CONFIRM-only choice:', self.router)
+        self.assertIn('already authorized strategies', self.contract)
+        self.assertIn('AUTHORIZATION_REQUIRED to Root', self.router)
+
+    def test_same_run_root_handoff_contains_missing_scope(self) -> None:
+        for phrase in ('Preserve the same run_id', 'authorization_proposal',
+                       'authorization_needed', 'same task', 'no-write state'):
+            self.assertIn(phrase, self.router + self.contract)
+        for field in ('authorization_needed:', 'authorization_proposal:',
+                      'explicit_prohibition_evidence:'):
+            self.assertEqual(self.contract.count(field), 1, field)
+
     def test_runtime_resilience_has_no_specific_version_instructions(self) -> None:
         runtime = text(ROOT.parent.parent / "docs/runtime-resilience.md")
         self.assertNotIn("version 0.6.", runtime.lower())

@@ -163,6 +163,39 @@ choice or `delegated_default` and the route stays within already authorized task
 scope. AUTO never authorizes new credentials, policy changes, provider approvals or
 out-of-scope destructive operations.
 
+### Authorization boundary classification before terminal return
+
+When strict returns REF_DELETE_UNAVAILABLE, classify technical eligibility and
+authorization SEPARATELY before returning a terminal result:
+
+- Already authorized: if an eligible strategy and its complete resource
+  disposition are covered by the verified current-run scope, follow the AUTO
+  strategy order without another pause.
+- Missing or ambiguous consent: if a potentially eligible strategy requires
+  branch retention or another effect not covered by the current grant, return
+  AUTHORIZATION_REQUIRED and handoff_status: returned_to_caller. Wording such
+  as "temporary CI branch with safe cleanup" does not grant persistent
+  retention, but is not by itself an explicit prohibition of a managed branch.
+- Explicit prohibition: if current user, host or repository policy actually
+  forbids the persistent resource, exclude that strategy; try only other
+  in-scope alternatives. If none is eligible, return BLOCKED with the policy
+  restriction, not an invented permission request.
+- Technical/provider blocker: if required capabilities, provider authority or
+  mandatory safeguards are genuinely absent, return BLOCKED with precise
+  evidence. A missing grant is not a technical blocker.
+- CONFIRM-only choice: AWAITING_CONFIRMATION is solely for strategy selection
+  within already authorized operations. Missing permission for an operation
+  or its retention requires AUTHORIZATION_REQUIRED to Root.
+
+Do not publish remote refs or start Actions while permission is unresolved.
+Preserve the same run_id, repository/full source SHA, selected fallback,
+proposed branch/retention, one-run check plan, authorization_needed,
+authorization_proposal, verified scope and capabilities, and no-write
+state. Return that structured handoff to Root, which may carry explicit new
+consent back to the same task. A strategy omitted from a filtered loader is
+not proof of technical ineligibility; use bounded installed-skill discovery
+and authorized same-strategy reconstruction without bypassing a denial.
+
 ## 5. General escalation rules
 
 Strategy skills are allowed to be implicitly selected **only inside a valid

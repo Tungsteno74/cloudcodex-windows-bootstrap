@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.6.8 - 2026-10-19
+
+- Distinguish missing/ambiguous grant, explicit prohibition, and technical
+  provider failure before a terminal fallback status.
+- Return AUTHORIZATION_REQUIRED with precise managed-retention scope to Root,
+  retaining run identity and forbidding remote writes before new consent.
+- Preserve AUTO, CONFIRM, strategy order, cleanup, and provider-denial guards;
+  add contract regression coverage.
+
+
 ## 0.6.7 - 2026-10-13
 
 - Add an optional, evidence-only Root-facing CloudRepo Environment Direct

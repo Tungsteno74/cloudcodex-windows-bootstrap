@@ -1,6 +1,8 @@
 # Project status
 
-Released state: **0.6.7 pre-1.0**.
+Released state: **0.6.8 pre-1.0**.
+
+Version 0.6.8 clarifies authorization-gap classification and same-run Root handoff.
 
 Version 0.6.7 adds an optional evidence-only Root-facing Direct recommendation
 for narrowly verified terminal readiness blocks; live behavior in fresh Cloud
